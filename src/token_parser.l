@@ -70,7 +70,11 @@ coma ","
 igual "="
 mult "*"
 resta "-"
-
+suma "+"
+comp ">="|"<="|"<"|">"|"=="
+and "&&"
+or "||"
+cadena \"([^"]|{nada})*\"
 
 
 
@@ -87,16 +91,20 @@ resta "-"
 {par_cerrado} {printf("parentesis cerrado\n");}
 {llave_abierta} {printf("llave abierta\n");}
 {llave_cerrada} {printf("llave cerrada\n");}
+{suma} {printf("encontro suma\n");}
 {coma} {printf("encontro coma\n");}
 {igual} {printf("encontro igual\n");}
 {mult} {printf("encontro mult\n");}
 {resta} {printf("encontro resta\n");}
+{and} {printf("encontro and\n");}
+{or} {printf("encontro or\n");}
 {ceil_keyword} {printf("encontro ceil built-in\n");}
 {floor_keyword} {printf("encontro floor built-in\n");}
 {let_keyword} {printf("encontro let\n");}
 {while_keyword} {printf("encontro while\n");}
 {if_keyword} {printf("encontro if\n");}
 {else_keyword} {printf("encontro else\n");}
+{comp} {printf("encontro comp operator: %s\n",yytext);}
 {fin_inst} {printf("fin instruccion\n");}
 {id} {printf("id: %s\n",yytext);}
 {comentario} {printf("comentario: %s\n",yytext);}
@@ -105,6 +113,7 @@ resta "-"
     // remove_spaces(cleaned);
     printf("lista argumentos: %s\n",yytext);
 }
+{cadena} {printf("cadena: %s\n",yytext);}
 {numero} {printf("numero: %s\n",yytext);}
 {nada}+ {//printf("encontro nada\n");
     }

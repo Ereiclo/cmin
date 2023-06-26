@@ -1,16 +1,6 @@
 
+function main(a,b,c, dd){
 
 
-function main(){
-    let a
-    , 
-    
-    b;
-
-    b = -.3;
-    a = 50 * b;
-
-    return floor(a);
-
-
+    return a + b + c;
 }

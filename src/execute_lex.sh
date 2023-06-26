@@ -1,2 +1,3 @@
-compile_flex token_parser.l
+flex token_parser.l
+gcc lex.yy.c -o exe
 ./exe
