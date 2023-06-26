@@ -1,15 +1,16 @@
-                 hola                 
-
-                /* hola comoe stas 
-                
-                
-                
-                
-                */  
-/**/ // comoe stas uwu
-
-si; //owo
 
 
-1324hola;
-/*adios caaaa*/
+
+function main(){
+    let a
+    , 
+    
+    b;
+
+    b = -.3;
+    a = 50 * b;
+
+    return floor(a);
+
+
+}
