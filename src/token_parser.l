@@ -114,6 +114,8 @@ cadena \"([^"]|{nada})*\"
 }
 {suma} {
     
+    yylval.value = strdup("+");
+
     return SUMA;
 }
 {coma} {

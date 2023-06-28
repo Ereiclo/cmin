@@ -909,12 +909,14 @@ YY_RULE_SETUP
 #line 115 "token_parser.l"
 {
     
+    yylval.value = strdup("+");
+
     return SUMA;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 119 "token_parser.l"
+#line 121 "token_parser.l"
 {
     
     return COMA;
@@ -922,7 +924,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 123 "token_parser.l"
+#line 125 "token_parser.l"
 {
     
     yylval.value = strdup("=");
@@ -931,7 +933,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 128 "token_parser.l"
+#line 130 "token_parser.l"
 {
     
 
@@ -941,7 +943,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 134 "token_parser.l"
+#line 136 "token_parser.l"
 {
     
     yylval.value = strdup("/");
@@ -950,7 +952,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 139 "token_parser.l"
+#line 141 "token_parser.l"
 {
     
     yylval.value = strdup("-");
@@ -959,7 +961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 144 "token_parser.l"
+#line 146 "token_parser.l"
 {
     
     yylval.value = strdup("and");
@@ -968,7 +970,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 149 "token_parser.l"
+#line 151 "token_parser.l"
 {
     
     yylval.value = strdup("or");
@@ -977,7 +979,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 154 "token_parser.l"
+#line 156 "token_parser.l"
 {
     
     return CEIL;
@@ -985,14 +987,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 158 "token_parser.l"
+#line 160 "token_parser.l"
 {
     return FLOOR;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 161 "token_parser.l"
+#line 163 "token_parser.l"
 {
     
     return LET;
@@ -1000,7 +1002,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 165 "token_parser.l"
+#line 167 "token_parser.l"
 {
     
     return WHILE;
@@ -1008,7 +1010,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 169 "token_parser.l"
+#line 171 "token_parser.l"
 {
     
     return IF;
@@ -1016,14 +1018,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 173 "token_parser.l"
+#line 175 "token_parser.l"
 {
     return ELSE;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 176 "token_parser.l"
+#line 178 "token_parser.l"
 {
     //tipo de comp
     yylval.value = strdup(yytext);
@@ -1033,14 +1035,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 182 "token_parser.l"
+#line 184 "token_parser.l"
 {
     return FIN;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 185 "token_parser.l"
+#line 187 "token_parser.l"
 {
     //guardar valor del id
 
@@ -1052,7 +1054,7 @@ YY_RULE_SETUP
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 192 "token_parser.l"
+#line 194 "token_parser.l"
 {
 
 }
@@ -1060,7 +1062,7 @@ YY_RULE_SETUP
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 195 "token_parser.l"
+#line 197 "token_parser.l"
 {
     char* cleaned = strdup(yytext);
     // remove_spaces(cleaned);
@@ -1072,7 +1074,7 @@ YY_RULE_SETUP
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 202 "token_parser.l"
+#line 204 "token_parser.l"
 {
     
     //valor de la cadena
@@ -1081,7 +1083,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 207 "token_parser.l"
+#line 209 "token_parser.l"
 {
     
 
@@ -1093,16 +1095,16 @@ YY_RULE_SETUP
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 214 "token_parser.l"
+#line 216 "token_parser.l"
 {//printf("encontro nada\n");
     }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 218 "token_parser.l"
+#line 220 "token_parser.l"
 ECHO;
 	YY_BREAK
-#line 1106 "lex.yy.c"
+#line 1108 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2107,7 +2109,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 218 "token_parser.l"
+#line 220 "token_parser.l"
 
 
 

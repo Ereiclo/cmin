@@ -46,7 +46,7 @@
 }
 
 
-%type<value> OP1 OP2 LOGIC
+%type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3
 %type<nodo> VALUE
 
@@ -62,99 +62,106 @@
 S: exp {
    printf("El codigo generado es:\n%s",$1.code);
 }
-exp: exp LOGIC level1 | level1 {
-   $$.name = (char*) malloc(51);
-   sprintf($$.name,"t%d",actual_temp++);
+exp: exp LOGIC level1 {
+   char* temp = concat_strings($1.code,$3.code);
+   if(strcmp($2,"and") == 0)
+      $$.code = concat_strings(temp,"land\n");
+   else if(strcmp($2,"or") == 0)
+      $$.code = concat_strings(temp,"lor\n");
 
-
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",$$.name,$1.name);
-
-
-   $$.code = concat_strings($1.code,actual_code);
-
-   free(actual_code);
+   free(temp);
    free($1.code);
-   free($1.name);
+   free($2);
+   free($3.code);
+}
+| level1 {
+
+   $$.code = $1.code;
 
 }
-level1: level1 COMP level2 | level2 {
-   $$.name = (char*) malloc(51);
-   sprintf($$.name,"t%d",actual_temp++);
+level1: level1 COMP level2 {
+   char* temp = concat_strings($1.code,$3.code);
+   if(strcmp($<value>2,">=") == 0)
+      $$.code = concat_strings(temp,"geq\n");
+   else if(strcmp($<value>2,"<=") == 0)
+      $$.code = concat_strings(temp,"leq\n");
+   else if(strcmp($<value>2,"<") == 0)
+      $$.code = concat_strings(temp,"le\n");
+   else if(strcmp($<value>2,">") == 0)
+      $$.code = concat_strings(temp,"ge\n");
+   else if(strcmp($<value>2,"==") == 0)
+      $$.code = concat_strings(temp,"equi\n");
 
-
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",$$.name,$1.name);
-
-
-   $$.code = concat_strings($1.code,actual_code);
-
-   free(actual_code);
+   free(temp);
    free($1.code);
-   free($1.name);
-
+   free($<value>2);
+   free($3.code);
 
 }
-level2: level2 OP1 level3 | level3 {
-   $$.name = (char*) malloc(51);
-   sprintf($$.name,"t%d",actual_temp++);
+| level2 {
 
+   $$.code = $1.code;
 
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",$$.name,$1.name);
+}
+level2: level2 OP1 level3 {
+   char* temp = concat_strings($1.code,$3.code);
+   if(strcmp($2,"+") == 0)
+      $$.code = concat_strings(temp,"ad\n");
+   else if(strcmp($2,"-") == 0)
+      $$.code = concat_strings(temp,"sb\n");
 
-
-
-   $$.code = concat_strings($1.code,actual_code);
-
-   free(actual_code);
+   free(temp);
    free($1.code);
-   free($1.name);
+   free($2);
+   free($3.code);
+}
+| level3 {
+
+
+   $$.code = $1.code;
+
+
 
 }
 level3: level3 OP2 VALUE {
-   $$.name = (char*) malloc(51);
-   sprintf($$.name,"t%d",actual_temp++);
 
 
-   char* actual_code = (char*) malloc(102);
-   sprintf(actual_code,"%s=%s%s%s\n",$$.name,
-                                 $1.name,     
-                                 $2,
-                                 $3.name);
+   char* temp = concat_strings($1.code,$3.code);
+   if(strcmp($2,"*") == 0)
+      $$.code = concat_strings(temp,"mp\n");
+   else if(strcmp($2,"/") == 0)
+      $$.code = concat_strings(temp,"dv\n");
 
-
-   $$.code = concat_strings(concat_strings($1.code,$3.code),actual_code);
-
-   free(actual_code);
+   free(temp);
    free($1.code);
-   free($1.name);
    free($2);
-   free($3.name);
    free($3.code);
 } 
 | VALUE {
-   $$.name = (char*) malloc(51);
-   sprintf($$.name,"t%d",actual_temp++);
 
 
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",$$.name,$1.name);
+   $$.code = $1.code;
 
-
-   $$.code = concat_strings($1.code,actual_code);
-
-   free(actual_code);
-   free($1.code);
-   free($1.name);
+   //free(actual_code);
+   //free($1.code);
+   //free($1.name);
 }
 VALUE: ID {
-   $$.code = strdup("");
-   $$.name = $<value>1;
+   $$.code = (char*) malloc(60);
+   sprintf($$.code,"lod %s\n",$<value>1);
+   free($<value>1);
+   //$$.name = $<value>1;
    //printf("%s\n",$$.name);
-} | PAR_ABIERTO exp PAR_CERRADO {$$.code = strdup("");}| NUMERO {
-   $$.code = strdup("");
-   $$.name = $<value>1;
+} | PAR_ABIERTO exp PAR_CERRADO {
+   $$.code = $2.code;
+   }
+   | NUMERO {
+
+   $$.code = (char*) malloc(60);
+   sprintf($$.code,"ldc %s\n",$<value>1);
+   free($<value>1);
+   //$$.code = strdup("");
+   //$$.name = $<value>1;
 }
 LOGIC: AND {$$ = $<value>1;} | OR {$$ = $<value>1;}
 OP1: SUMA {$$ = $<value>1;} | RESTA  {$$ = $<value>1;}

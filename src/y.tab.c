@@ -670,8 +670,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    65,    65,    81,    81,    98,    98,   115,
-     136,   151,   155,   155,   159,   159,   160,   160,   161,   161
+       0,    62,    62,    65,    77,    82,   101,   106,   118,   126,
+     140,   149,   155,   158,   166,   166,   167,   167,   168,   168
 };
 #endif
 
@@ -1251,180 +1251,201 @@ yyreduce:
 #line 1252 "y.tab.c"
     break;
 
-  case 4: /* exp: level1  */
+  case 3: /* exp: exp LOGIC level1  */
 #line 65 "lexical_analyzer.y"
-                               {
-   (yyval.nodo).name = (char*) malloc(51);
-   sprintf((yyval.nodo).name,"t%d",actual_temp++);
+                      {
+   char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
+   if(strcmp((yyvsp[-1].value),"and") == 0)
+      (yyval.nodo).code = concat_strings(temp,"land\n");
+   else if(strcmp((yyvsp[-1].value),"or") == 0)
+      (yyval.nodo).code = concat_strings(temp,"lor\n");
 
-
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",(yyval.nodo).name,(yyvsp[0].nodo).name);
-
-
-   (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,actual_code);
-
-   free(actual_code);
+   free(temp);
+   free((yyvsp[-2].nodo).code);
+   free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
-   free((yyvsp[0].nodo).name);
+}
+#line 1269 "y.tab.c"
+    break;
+
+  case 4: /* exp: level1  */
+#line 77 "lexical_analyzer.y"
+         {
+
+   (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 1273 "y.tab.c"
+#line 1279 "y.tab.c"
+    break;
+
+  case 5: /* level1: level1 COMP level2  */
+#line 82 "lexical_analyzer.y"
+                           {
+   char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
+   if(strcmp((yyvsp[-1].value),">=") == 0)
+      (yyval.nodo).code = concat_strings(temp,"geq\n");
+   else if(strcmp((yyvsp[-1].value),"<=") == 0)
+      (yyval.nodo).code = concat_strings(temp,"leq\n");
+   else if(strcmp((yyvsp[-1].value),"<") == 0)
+      (yyval.nodo).code = concat_strings(temp,"le\n");
+   else if(strcmp((yyvsp[-1].value),">") == 0)
+      (yyval.nodo).code = concat_strings(temp,"ge\n");
+   else if(strcmp((yyvsp[-1].value),"==") == 0)
+      (yyval.nodo).code = concat_strings(temp,"equi\n");
+
+   free(temp);
+   free((yyvsp[-2].nodo).code);
+   free((yyvsp[-1].value));
+   free((yyvsp[0].nodo).code);
+
+}
+#line 1303 "y.tab.c"
     break;
 
   case 6: /* level1: level2  */
-#line 81 "lexical_analyzer.y"
-                                    {
-   (yyval.nodo).name = (char*) malloc(51);
-   sprintf((yyval.nodo).name,"t%d",actual_temp++);
+#line 101 "lexical_analyzer.y"
+         {
 
-
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",(yyval.nodo).name,(yyvsp[0].nodo).name);
-
-
-   (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,actual_code);
-
-   free(actual_code);
-   free((yyvsp[0].nodo).code);
-   free((yyvsp[0].nodo).name);
-
+   (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 1295 "y.tab.c"
+#line 1313 "y.tab.c"
+    break;
+
+  case 7: /* level2: level2 OP1 level3  */
+#line 106 "lexical_analyzer.y"
+                          {
+   char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
+   if(strcmp((yyvsp[-1].value),"+") == 0)
+      (yyval.nodo).code = concat_strings(temp,"ad\n");
+   else if(strcmp((yyvsp[-1].value),"-") == 0)
+      (yyval.nodo).code = concat_strings(temp,"sb\n");
+
+   free(temp);
+   free((yyvsp[-2].nodo).code);
+   free((yyvsp[-1].value));
+   free((yyvsp[0].nodo).code);
+}
+#line 1330 "y.tab.c"
     break;
 
   case 8: /* level2: level3  */
-#line 98 "lexical_analyzer.y"
-                                   {
-   (yyval.nodo).name = (char*) malloc(51);
-   sprintf((yyval.nodo).name,"t%d",actual_temp++);
+#line 118 "lexical_analyzer.y"
+         {
 
 
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",(yyval.nodo).name,(yyvsp[0].nodo).name);
+   (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 
 
-   (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,actual_code);
-
-   free(actual_code);
-   free((yyvsp[0].nodo).code);
-   free((yyvsp[0].nodo).name);
-
-}
-#line 1317 "y.tab.c"
-    break;
-
-  case 9: /* level3: level3 OP2 VALUE  */
-#line 115 "lexical_analyzer.y"
-                         {
-   (yyval.nodo).name = (char*) malloc(51);
-   sprintf((yyval.nodo).name,"t%d",actual_temp++);
-
-
-   char* actual_code = (char*) malloc(102);
-   sprintf(actual_code,"%s=%s%s%s\n",(yyval.nodo).name,
-                                 (yyvsp[-2].nodo).name,     
-                                 (yyvsp[-1].value),
-                                 (yyvsp[0].nodo).name);
-
-
-   (yyval.nodo).code = concat_strings(concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code),actual_code);
-
-   free(actual_code);
-   free((yyvsp[-2].nodo).code);
-   free((yyvsp[-2].nodo).name);
-   free((yyvsp[-1].value));
-   free((yyvsp[0].nodo).name);
-   free((yyvsp[0].nodo).code);
 }
 #line 1343 "y.tab.c"
     break;
 
-  case 10: /* level3: VALUE  */
-#line 136 "lexical_analyzer.y"
-        {
-   (yyval.nodo).name = (char*) malloc(51);
-   sprintf((yyval.nodo).name,"t%d",actual_temp++);
+  case 9: /* level3: level3 OP2 VALUE  */
+#line 126 "lexical_analyzer.y"
+                         {
 
 
-   char* actual_code = (char*) malloc(101);
-   sprintf(actual_code,"%s=%s\n",(yyval.nodo).name,(yyvsp[0].nodo).name);
+   char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
+   if(strcmp((yyvsp[-1].value),"*") == 0)
+      (yyval.nodo).code = concat_strings(temp,"mp\n");
+   else if(strcmp((yyvsp[-1].value),"/") == 0)
+      (yyval.nodo).code = concat_strings(temp,"dv\n");
 
-
-   (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,actual_code);
-
-   free(actual_code);
+   free(temp);
+   free((yyvsp[-2].nodo).code);
+   free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
-   free((yyvsp[0].nodo).name);
 }
-#line 1363 "y.tab.c"
+#line 1362 "y.tab.c"
+    break;
+
+  case 10: /* level3: VALUE  */
+#line 140 "lexical_analyzer.y"
+        {
+
+
+   (yyval.nodo).code = (yyvsp[0].nodo).code;
+
+   //free(actual_code);
+   //free($1.code);
+   //free($1.name);
+}
+#line 1376 "y.tab.c"
     break;
 
   case 11: /* VALUE: ID  */
-#line 151 "lexical_analyzer.y"
+#line 149 "lexical_analyzer.y"
           {
-   (yyval.nodo).code = strdup("");
-   (yyval.nodo).name = (yyvsp[0].value);
+   (yyval.nodo).code = (char*) malloc(60);
+   sprintf((yyval.nodo).code,"lod %s\n",(yyvsp[0].value));
+   free((yyvsp[0].value));
+   //$$.name = $<value>1;
    //printf("%s\n",$$.name);
-}
-#line 1373 "y.tab.c"
-    break;
-
-  case 12: /* VALUE: PAR_ABIERTO exp PAR_CERRADO  */
-#line 155 "lexical_analyzer.y"
-                                {(yyval.nodo).code = strdup("");}
-#line 1379 "y.tab.c"
-    break;
-
-  case 13: /* VALUE: NUMERO  */
-#line 155 "lexical_analyzer.y"
-                                                                {
-   (yyval.nodo).code = strdup("");
-   (yyval.nodo).name = (yyvsp[0].value);
 }
 #line 1388 "y.tab.c"
     break;
 
+  case 12: /* VALUE: PAR_ABIERTO exp PAR_CERRADO  */
+#line 155 "lexical_analyzer.y"
+                                {
+   (yyval.nodo).code = (yyvsp[-1].nodo).code;
+   }
+#line 1396 "y.tab.c"
+    break;
+
+  case 13: /* VALUE: NUMERO  */
+#line 158 "lexical_analyzer.y"
+            {
+
+   (yyval.nodo).code = (char*) malloc(60);
+   sprintf((yyval.nodo).code,"ldc %s\n",(yyvsp[0].value));
+   free((yyvsp[0].value));
+   //$$.code = strdup("");
+   //$$.name = $<value>1;
+}
+#line 1409 "y.tab.c"
+    break;
+
   case 14: /* LOGIC: AND  */
-#line 159 "lexical_analyzer.y"
+#line 166 "lexical_analyzer.y"
            {(yyval.value) = (yyvsp[0].value);}
-#line 1394 "y.tab.c"
+#line 1415 "y.tab.c"
     break;
 
   case 15: /* LOGIC: OR  */
-#line 159 "lexical_analyzer.y"
+#line 166 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 1400 "y.tab.c"
+#line 1421 "y.tab.c"
     break;
 
   case 16: /* OP1: SUMA  */
-#line 160 "lexical_analyzer.y"
+#line 167 "lexical_analyzer.y"
           {(yyval.value) = (yyvsp[0].value);}
-#line 1406 "y.tab.c"
+#line 1427 "y.tab.c"
     break;
 
   case 17: /* OP1: RESTA  */
-#line 160 "lexical_analyzer.y"
+#line 167 "lexical_analyzer.y"
                                      {(yyval.value) = (yyvsp[0].value);}
-#line 1412 "y.tab.c"
+#line 1433 "y.tab.c"
     break;
 
   case 18: /* OP2: MULT  */
-#line 161 "lexical_analyzer.y"
+#line 168 "lexical_analyzer.y"
           {(yyval.value) = (yyvsp[0].value);}
-#line 1418 "y.tab.c"
+#line 1439 "y.tab.c"
     break;
 
   case 19: /* OP2: DIV  */
-#line 161 "lexical_analyzer.y"
+#line 168 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 1424 "y.tab.c"
+#line 1445 "y.tab.c"
     break;
 
 
-#line 1428 "y.tab.c"
+#line 1449 "y.tab.c"
 
       default: break;
     }
@@ -1617,7 +1638,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 163 "lexical_analyzer.y"
+#line 170 "lexical_analyzer.y"
 
 
 void parse(FILE *file) {
