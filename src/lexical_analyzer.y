@@ -47,7 +47,7 @@
 
 
 %type<value> OP1 OP2 LOGIC 
-%type<nodo> exp level1 level2 level3
+%type<nodo> exp level1 level2 level3 CODE IN I
 %type<nodo> VALUE
 
 
@@ -59,8 +59,35 @@
 
 
 %%
-S: exp {
+S: CODE {
    printf("El codigo generado es:\n%s",$1.code);
+}
+CODE: CODE I { 
+   $$.code = concat_strings($1.code,$2.code);
+
+   free($1.code);
+
+}| I  {
+   $$.code = $1.code;
+}
+I: IN FIN {
+   $$.code = $1.code;
+}
+IN: exp {
+   $$.code = $1.code;
+}
+| ID IGUAL exp {
+   char* temp1 = (char*) malloc(100);
+   sprintf(temp1,"lda %s\n",$<value>1);
+   char* temp2 = concat_strings(temp1,$3.code);
+
+   $$.code = concat_strings(temp2,"sto\n");
+
+   free(temp1);
+   free(temp2);
+   free($<value>1);
+   free($<value>2);
+   free($3.code);
 }
 exp: exp LOGIC level1 {
    char* temp = concat_strings($1.code,$3.code);
