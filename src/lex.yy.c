@@ -354,8 +354,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 28
-#define YY_END_OF_BUFFER 29
+#define YY_NUM_RULES 29
+#define YY_END_OF_BUFFER 30
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -365,16 +365,16 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[94] =
     {   0,
-        0,    0,   29,   28,   27,   28,   28,    3,    4,   10,
-        7,    8,   11,   28,   28,   26,   21,   20,    9,   20,
-       22,   22,   22,   22,   22,   22,   22,   22,    5,   28,
-        6,   27,    0,    0,   25,   12,    0,    0,    0,   26,
-       26,    0,   23,   26,   20,   22,   22,   22,   22,   22,
-       22,   18,   22,   22,   22,   13,    0,   24,    0,    0,
-        0,    0,    0,    0,   23,   26,   22,   22,   22,   22,
-       16,   22,   22,    0,    0,   23,   14,   19,   22,   22,
-       22,   22,    0,    0,   15,   22,   22,   17,   22,    1,
-       22,    2,    0
+        0,    0,   30,   29,   28,   29,   29,    3,    4,   10,
+        7,    8,   12,   29,   11,   27,   22,   21,    9,   21,
+       23,   23,   23,   23,   23,   23,   23,   23,    5,   29,
+        6,   28,    0,    0,   26,   13,    0,    0,    0,   27,
+       27,    0,   24,   27,   21,   23,   23,   23,   23,   23,
+       23,   19,   23,   23,   23,   14,    0,   25,    0,    0,
+        0,    0,    0,    0,   24,   27,   23,   23,   23,   23,
+       17,   23,   23,    0,    0,   24,   15,   20,   23,   23,
+       23,   23,    0,    0,   16,   23,   23,   18,   23,    1,
+       23,    2,    0
 
     } ;
 
@@ -534,6 +534,7 @@ char *yytext;
 #line 2 "token_parser.l"
     #include <stdio.h>
     #include <string.h>
+    #include "y.tab.h"
 
     char **split_by_commas(char *s)
     {
@@ -575,8 +576,8 @@ char *yytext;
 
 
 
-#line 579 "lex.yy.c"
 #line 580 "lex.yy.c"
+#line 581 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -793,11 +794,11 @@ YY_DECL
 		}
 
 	{
-#line 85 "token_parser.l"
+#line 87 "token_parser.l"
 
 
 
-#line 801 "lex.yy.c"
+#line 802 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -856,154 +857,252 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 88 "token_parser.l"
-{printf("return keyword\n");}
+#line 90 "token_parser.l"
+{
+    
+
+    return RETURN;
+}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 89 "token_parser.l"
-{printf("function keyword\n");}
+#line 95 "token_parser.l"
+{
+    
+    return FUNCTION;
+}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 90 "token_parser.l"
-{printf("parentesis abierto\n");}
+#line 99 "token_parser.l"
+{
+    
+    return PAR_ABIERTO;
+}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 91 "token_parser.l"
-{printf("parentesis cerrado\n");}
+#line 103 "token_parser.l"
+{
+    
+    return PAR_CERRADO;
+}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 92 "token_parser.l"
-{printf("llave abierta\n");}
+#line 107 "token_parser.l"
+{
+    
+    return LLAVE_ABIERTA;
+}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 93 "token_parser.l"
-{printf("llave cerrada\n");}
+#line 111 "token_parser.l"
+{
+    
+    return LLAVE_CERRADA;
+}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 94 "token_parser.l"
-{printf("encontro suma\n");}
+#line 115 "token_parser.l"
+{
+    
+    return SUMA;
+}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 95 "token_parser.l"
-{printf("encontro coma\n");}
+#line 119 "token_parser.l"
+{
+    
+    return COMA;
+}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 96 "token_parser.l"
-{printf("encontro igual\n");}
+#line 123 "token_parser.l"
+{
+    
+    yylval.value = strdup("=");
+    return IGUAL;
+}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 97 "token_parser.l"
-{printf("encontro mult\n");}
+#line 128 "token_parser.l"
+{
+    
+
+    yylval.value = strdup("*");
+    return MULT;
+}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 98 "token_parser.l"
-{printf("encontro resta\n");}
+#line 134 "token_parser.l"
+{
+    
+    yylval.value = strdup("/");
+    return DIV;
+}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 99 "token_parser.l"
-{printf("encontro and\n");}
+#line 139 "token_parser.l"
+{
+    
+    yylval.value = strdup("-");
+    return RESTA;
+}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 100 "token_parser.l"
-{printf("encontro or\n");}
+#line 144 "token_parser.l"
+{
+    
+    yylval.value = strdup("and");
+    return AND;
+}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 101 "token_parser.l"
-{printf("encontro ceil built-in\n");}
+#line 149 "token_parser.l"
+{
+    
+    yylval.value = strdup("or");
+    return OR;
+}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 102 "token_parser.l"
-{printf("encontro floor built-in\n");}
+#line 154 "token_parser.l"
+{
+    
+    return CEIL;
+}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 103 "token_parser.l"
-{printf("encontro let\n");}
+#line 158 "token_parser.l"
+{
+    return FLOOR;
+}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 104 "token_parser.l"
-{printf("encontro while\n");}
+#line 161 "token_parser.l"
+{
+    
+    return LET;
+}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 105 "token_parser.l"
-{printf("encontro if\n");}
+#line 165 "token_parser.l"
+{
+    
+    return WHILE;
+}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 106 "token_parser.l"
-{printf("encontro else\n");}
+#line 169 "token_parser.l"
+{
+    
+    return IF;
+}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 107 "token_parser.l"
-{printf("encontro comp operator: %s\n",yytext);}
+#line 173 "token_parser.l"
+{
+    return ELSE;
+}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 108 "token_parser.l"
-{printf("fin instruccion\n");}
+#line 176 "token_parser.l"
+{
+    //tipo de comp
+    yylval.value = strdup(yytext);
+
+    return COMP;
+}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 109 "token_parser.l"
-{printf("id: %s\n",yytext);}
+#line 182 "token_parser.l"
+{
+    return FIN;
+}
 	YY_BREAK
 case 23:
-/* rule 23 can match eol */
 YY_RULE_SETUP
-#line 110 "token_parser.l"
-{printf("comentario: %s\n",yytext);}
+#line 185 "token_parser.l"
+{
+    //guardar valor del id
+
+    yylval.value = strdup(yytext);
+
+    return ID;
+}
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 111 "token_parser.l"
+#line 192 "token_parser.l"
 {
-    char* cleaned = strdup(yytext);
-    // remove_spaces(cleaned);
-    printf("lista argumentos: %s\n",yytext);
+
 }
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 116 "token_parser.l"
-{printf("cadena: %s\n",yytext);}
+#line 195 "token_parser.l"
+{
+    char* cleaned = strdup(yytext);
+    // remove_spaces(cleaned);
+
+
+    return LISTA_ARGS;
+}
 	YY_BREAK
 case 26:
+/* rule 26 can match eol */
 YY_RULE_SETUP
-#line 117 "token_parser.l"
-{printf("numero: %s\n",yytext);}
+#line 202 "token_parser.l"
+{
+    
+    //valor de la cadena
+    return CADENA;
+}
 	YY_BREAK
 case 27:
-/* rule 27 can match eol */
 YY_RULE_SETUP
-#line 118 "token_parser.l"
+#line 207 "token_parser.l"
+{
+    
+
+    //valor del numero
+    yylval.value = strdup(yytext);
+    return NUMERO;
+}
+	YY_BREAK
+case 28:
+/* rule 28 can match eol */
+YY_RULE_SETUP
+#line 214 "token_parser.l"
 {//printf("encontro nada\n");
     }
 	YY_BREAK
-case 28:
+case 29:
 YY_RULE_SETUP
-#line 122 "token_parser.l"
+#line 218 "token_parser.l"
 ECHO;
 	YY_BREAK
-#line 1007 "lex.yy.c"
+#line 1106 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2008,20 +2107,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 122 "token_parser.l"
+#line 218 "token_parser.l"
 
-
-
-int main (int argc, char *argv[]){
-    if ((yyin = fopen("input","rt"))==NULL){
-        printf("\n No se puede abrir el archivo %s\n",argv[1]);
-    }
-    else{
-        // printf(" Se abrio el archivo %s\n",argv[1]);
-        yylex();
-        fclose(yyin);
-    }
-    return 0;
-}
 
 

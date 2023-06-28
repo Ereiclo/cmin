@@ -72,7 +72,6 @@ igual "="
 mult "*"
 resta "-"
 suma "+"
-div "/"
 comp ">="|"<="|"<"|">"|"=="
 and "&&"
 or "||"
@@ -88,128 +87,117 @@ cadena \"([^"]|{nada})*\"
 
 
 {return_keyword} {
-    
-
-    return RETURN;
+    printf("return keyword\n");
+    // return 258;
 }
 {funct_keyword} {
-    
-    return FUNCTION;
+    printf("function keyword\n");
+    // return FUNCTION;
 }
 {par_abierto} {
-    
-    return PAR_ABIERTO;
+    printf("parentesis abierto\n");
+    // return PAR_ABIERTO;
 }
 {par_cerrado} {
-    
-    return PAR_CERRADO;
+    printf("parentesis cerrado\n");
+    // return PAR_CERRADO;
 }
 {llave_abierta} {
-    
-    return LLAVE_ABIERTA;
+    printf("llave abierta\n");
+    // return LLAVE_ABIERTA;
 }
 {llave_cerrada} {
-    
-    return LLAVE_CERRADA;
+    printf("llave cerrada\n");
+    // return LLAVE_CERRADA;
 }
 {suma} {
-    
-    return SUMA;
+    printf("encontro suma\n");
+    // return SUMA;
 }
 {coma} {
-    
-    return COMA;
+    printf("encontro coma\n");
+    // return COMA;
 }
 {igual} {
-    
-    yylval.value = strdup("=");
-    return IGUAL;
+    printf("encontro igual\n");
+    // return IGUAL;
 }
 {mult} {
-    
-
-    yylval.value = strdup("*");
-    return MULT;
-}
-{div} {
-    
-    yylval.value = strdup("/");
-    return DIV;
+    printf("encontro mult\n");
+    // return MULT;
 }
 {resta} {
-    
-    yylval.value = strdup("-");
-    return RESTA;
+    printf("encontro resta\n");
+    // return RESTA;
 }
 {and} {
-    
-    yylval.value = strdup("and");
-    return AND;
+    printf("encontro and\n");
+    // return AND;
 }
 {or} {
-    
-    yylval.value = strdup("or");
-    return OR;
+    printf("encontro or\n");
+    // return OR;
 }
 {ceil_keyword} {
-    
-    return CEIL;
+    printf("encontro ceil built-in\n");
+    // return CEIL;
 }
-{floor_keyword} {
-    return FLOOR;
+{floor_keyword} {printf("encontro floor built-in\n");
+    // return FLOOR;
 }
 {let_keyword} {
-    
-    return LET;
+    printf("encontro let\n");
+    // return LET;
 }
 {while_keyword} {
-    
-    return WHILE;
+    printf("encontro while\n");
+    // return WHILE;
 }
 {if_keyword} {
-    
-    return IF;
+    printf("encontro if\n");
+    // return IF;
 }
 {else_keyword} {
-    return ELSE;
+    printf("encontro else\n");
+    // return ELSE;
 }
 {comp} {
+    printf("encontro comp operator: %s\n",yytext);
     //tipo de comp
-    yylval.value = strdup(yytext);
 
-    return COMP;
+    // return COMP;
 }
 {fin_inst} {
-    return FIN;
+    printf("fin instruccion\n");
+    // return FIN;
 }
 {id} {
+    printf("id: %s\n",yytext);
     //guardar valor del id
 
-    yylval.value = strdup(yytext);
-
-    return ID;
+    // return ID;
 }
 {comentario} {
-
+    printf("comentario: %s\n",yytext);
 }
 {lista_args} {
     char* cleaned = strdup(yytext);
     // remove_spaces(cleaned);
+    printf("lista argumentos: %s\n",yytext);
 
 
-    return LISTA_ARGS;
+    // return LISTA_ARGS;
 }
 {cadena} {
-    
+    printf("cadena: %s\n",yytext);
     //valor de la cadena
-    return CADENA;
+    // return CADENA;
 }
 {numero} {
-    
+    printf("numero: %s\n",yytext);
 
     //valor del numero
-    yylval.value = strdup(yytext);
-    return NUMERO;
+    // return NUMERO;
 }
 {nada}+ {//printf("encontro nada\n");
     }
