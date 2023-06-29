@@ -46,6 +46,7 @@
 %}
 
 %option noyywrap
+%option yylineno
 
 id [a-zA-Z]+[a-z0-9A-Z]*
 nada [ \t\n\r]
@@ -98,50 +99,59 @@ cadena \"([^"]|{nada})*\"
 }
 {par_abierto} {
     
-    return PAR_ABIERTO;
+    return '(';
 }
 {par_cerrado} {
     
-    return PAR_CERRADO;
+    return ')';
 }
 {llave_abierta} {
     
-    return LLAVE_ABIERTA;
+    return '{';
 }
 {llave_cerrada} {
     
-    return LLAVE_CERRADA;
+    return '}';
 }
+{cor_abierto} {
+    
+    return '[';
+}
+{cor_cerrado} {
+    
+    return ']';
+}
+
 {suma} {
     
     yylval.value = strdup("+");
 
-    return SUMA;
+    return '+';
 }
 {coma} {
     
-    return COMA;
+    return ',';
 }
 {igual} {
     
     yylval.value = strdup("=");
-    return IGUAL;
+    return '=';
 }
 {mult} {
     
 
     yylval.value = strdup("*");
-    return MULT;
+    return '*';
 }
 {div} {
     
     yylval.value = strdup("/");
-    return DIV;
+    return '/';
 }
 {resta} {
     
     yylval.value = strdup("-");
-    return RESTA;
+    return '-';
 }
 {and} {
     
@@ -182,7 +192,7 @@ cadena \"([^"]|{nada})*\"
     return COMP;
 }
 {fin_inst} {
-    return FIN;
+    return ';';
 }
 {id} {
     //guardar valor del id
@@ -215,6 +225,8 @@ cadena \"([^"]|{nada})*\"
 }
 {nada}+ {//printf("encontro nada\n");
     }
+
+. {yyerror("Unexpected token"); return YYerror;}
 
 
 %%

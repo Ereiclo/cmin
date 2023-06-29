@@ -4,7 +4,7 @@
    //#include <math.h>
    #include <string.h>
    int yylex(void);
-   void yyerror(char *s);
+   void yyerror(const char *s);
    FILE *yyin;
    int actual_temp = 0;
 
@@ -16,6 +16,9 @@
       strcat(new_string,src);
 
    }
+
+
+
 %}
 
 %{
@@ -48,8 +51,8 @@
 
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I
-%type<nodo> VALUE
-
+%type<nodo> VALUE DECL
+%define parse.error detailed
 
 
 %{
@@ -69,14 +72,14 @@ CODE: CODE I {
 
 }| I  {
    $$.code = $1.code;
-}
-I: IN FIN {
+} 
+I: IN ';' {
    $$.code = $1.code;
-}
+} 
 IN: exp {
    $$.code = $1.code;
-}
-| ID IGUAL exp {
+} 
+| ID '=' exp {
    char* temp1 = (char*) malloc(100);
    sprintf(temp1,"lda %s\n",$<value>1);
    char* temp2 = concat_strings(temp1,$3.code);
@@ -88,7 +91,34 @@ IN: exp {
    free($<value>1);
    free($<value>2);
    free($3.code);
+}|
+DECL {
+   $$.code = $1.code;
 }
+| {
+   $$.code = strdup("");
+}
+
+DECL: DECL ',' ID  {
+   char* temp = (char*) malloc(100);
+
+   sprintf(temp,"new_var %s\n",$<value>3);
+   $$.code = concat_strings($1.code,temp);
+
+   free($<value>3);
+   free($1.code);
+   free(temp);
+
+}
+| LET ID {
+   $$.code = (char*) malloc(100);
+   sprintf($$.code,"new_var %s\n",$<value>2);
+
+   free($<value>2);
+   
+} 
+
+
 exp: exp LOGIC level1 {
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"and") == 0)
@@ -169,6 +199,7 @@ level3: level3 OP2 VALUE {
 
    $$.code = $1.code;
 
+   //printf("code: %s",$$.code);
    //free(actual_code);
    //free($1.code);
    //free($1.name);
@@ -179,11 +210,10 @@ VALUE: ID {
    free($<value>1);
    //$$.name = $<value>1;
    //printf("%s\n",$$.name);
-} | PAR_ABIERTO exp PAR_CERRADO {
+} | '(' exp ')' {
    $$.code = $2.code;
    }
    | NUMERO {
-
    $$.code = (char*) malloc(60);
    sprintf($$.code,"ldc %s\n",$<value>1);
    free($<value>1);
@@ -191,21 +221,10 @@ VALUE: ID {
    //$$.name = $<value>1;
 }
 LOGIC: AND {$$ = $<value>1;} | OR {$$ = $<value>1;}
-OP1: SUMA {$$ = $<value>1;} | RESTA  {$$ = $<value>1;}
-OP2: MULT {$$ = $<value>1;} | DIV {$$ = $<value>1;}
+OP1: '+' {$$ = $<value>1;} | '-'  {$$ = $<value>1;}
+OP2: '*' {$$ = $<value>1;} | '/' {$$ = $<value>1;}
 
 %%
-
-void parse(FILE *file) {
-   yyin = file;
-   yyparse();
-   fclose(yyin);
-}
-
-void yyerror(char *s) {
-   printf("\n%s\n", s);
-}
-
 
 
 
