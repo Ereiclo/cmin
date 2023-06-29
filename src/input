@@ -1,2 +1,7 @@
-let a,b,c;
-let b[30];
+
+let adios[1000];
+let a,b;
+
+
+a = adios[0]/10;
+
