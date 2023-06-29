@@ -119,7 +119,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 48 "lexical_analyzer.y"
+#line 49 "lexical_analyzer.y"
 
     tipot estru;
     int num;

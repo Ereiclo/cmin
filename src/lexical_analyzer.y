@@ -11,6 +11,7 @@
    int n_symbols = 0;
    char** function_table[2];
    int n_functions = 0;
+   int actual_label = 0;
 
    int check_symbol_existence(char* symbol);
    char* concat_strings(char* dest, char* src){
@@ -56,38 +57,60 @@
 
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I
-%type<nodo> VALUE DECL NUM_LIKE
+%type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P 
 %define parse.error detailed
 
-
-%{
-    //%type<estru> C;
-
-%}
+%right "then" ELSE
 
 
 %%
-S: CODE {
+S: 
+
+CODE
+{
    printf("El codigo generado es:\n%s",$1.code);
 };
-CODE: CODE I { 
+
+CODE:
+
+CODE I 
+{ 
    $$.code = concat_strings($1.code,$2.code);
 
    free($1.code);
 
-}| I  {
+} | 
+
+I  
+{
    $$.code = $1.code;
 }; 
-I: IN ';' {
+
+I: 
+
+IN ';' 
+{
    $$.code = $1.code;
-};
+} |
+
+SUB_CODE 
+{
+   $$.code = $1.code;
+} 
+
+;
+
 IN: 
- ID {
-   if(!check_symbol_existence($<value>1)) {
-      yyerror("Variable does not exists");
-      YYERROR;
-   }
-} '='   exp {
+ 
+ID 
+{
+      if(!check_symbol_existence($<value>1)) {
+         yyerror("Variable does not exists");
+         YYERROR;
+      }
+} 
+'=' exp 
+{
    char* temp1 = (char*) malloc(100);
    sprintf(temp1,"lda %s\n",$<value>1);
                                     //es $4 porque cuando se pone acciones
@@ -102,14 +125,17 @@ IN:
    free($<value>1);
    free($<value>3);
    free($4.code);
-}|
+} |
 
-ID {
+ID 
+{
    if(!check_symbol_existence($<value>1)) {
       yyerror("Variable does not exists");
       YYERROR;
    }
-} '[' NUM_LIKE {
+}
+'[' NUM_LIKE 
+{
 
    $<nodo>$.code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad\n";
@@ -119,9 +145,9 @@ ID {
    free($4.code);
 
 
-} ']'
-
-'='   exp {
+} 
+']' '=' exp 
+{
    char* temp = concat_strings($<nodo>5.code,$8.code);
 
    $$.code = concat_strings(temp,"sto\n");
@@ -129,17 +155,94 @@ ID {
    free(temp);
    free($<nodo>5.code);
    free($8.code);
-}
+} |
 
-|
-DECL {
+DECL
+{
    $$.code = $1.code;
-}
-| %empty {
+} |
+
+%empty {
    $$.code = strdup("");
 };
 
-DECL: DECL ',' ID  {
+SUB_CODE: IF_BLOCK {$$.code = $1.code;} | IF_ELSE_BLOCK {$$.code = $1.code;};
+
+
+IF_BLOCK: 
+IF '(' exp ')' P %prec "then"
+{
+
+   int label = actual_label++;
+
+   char* temp1 = malloc(100);
+   sprintf(temp1,"ne\ntjp L%d\n",label);
+
+   char* temp2 = malloc(100);
+   sprintf(temp2,"lab L%d\n",label);
+
+   char* temp3 = concat_strings($3.code,temp1);
+   char* temp4 = concat_strings($5.code,temp2);
+
+
+
+
+   $$.code = concat_strings(temp3,temp4);
+
+   free($3.code);
+   free($5.code);
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free(temp4);
+};
+
+IF_ELSE_BLOCK: 
+IF '(' exp ')' P ELSE P
+{
+
+   int label_else = actual_label++;
+   int label_end = actual_label++;
+
+   char* temp1 = malloc(100);
+   sprintf(temp1,"ne\ntjp L%d\n",label_else);
+
+   char* temp2 = malloc(100);
+   sprintf(temp2,"ujp L%d\nlab L%d\n",label_end,label_else);
+
+   char* temp3 = malloc(100);
+   sprintf(temp3,"lab L%d\n",label_end);
+
+   char* temp4 = concat_strings($3.code,temp1);
+
+   char* temp5 = concat_strings($5.code,temp2);
+
+   char* temp6 = concat_strings($7.code,temp3);
+
+
+   char* temp7 = concat_strings(temp4,temp5);
+
+   $$.code = concat_strings(temp7,temp6);
+
+   free($3.code);
+   free($5.code);
+   free($7.code);
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free(temp4);
+   free(temp5);
+   free(temp6);
+
+};
+
+
+P: I {$$.code = $1.code;} | '{' CODE '}' {$$.code = $2.code;}; | '{' '}' {$$.code =strdup("");}
+
+DECL: 
+
+DECL ',' ID 
+{
    if(check_symbol_existence($<value>3)){
       yyerror("Variable already exists");
       YYABORT; 
@@ -156,7 +259,10 @@ DECL: DECL ',' ID  {
    free($1.code);
    free(temp);
 
-} | DECL ',' ID '[' NUMERO ']' {
+} | 
+
+DECL ',' ID '[' NUMERO ']' 
+{
    if(check_symbol_existence($<value>3)){
       yyerror("Variable already exists");
       YYABORT; 
@@ -182,8 +288,10 @@ DECL: DECL ',' ID  {
    free(temp);
    free($<value>3);
    free($<value>5);
-}
-| LET ID {
+} |
+
+LET ID 
+{
    if(check_symbol_existence($<value>2)){
       yyerror("Variable already exists");
       YYABORT; 
@@ -196,7 +304,10 @@ DECL: DECL ',' ID  {
 
    free($<value>2);
    
-} | LET ID '[' NUMERO ']' {
+} | 
+
+LET ID '[' NUMERO ']' 
+{
    if(check_symbol_existence($<value>2)){
       yyerror("Variable already exists");
       YYABORT; 
@@ -219,15 +330,15 @@ DECL: DECL ',' ID  {
    sprintf($$.code,template_string,$<value>2,$<value>2,num_i);
    push_symbol($<value>2);
 
-   
-
    free($<value>2);
    free($<value>4);
-
 };
 
 
-exp: exp LOGIC level1 {
+exp:
+
+exp LOGIC level1 
+{
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"and") == 0)
       $$.code = concat_strings(temp,"land\n");
@@ -238,13 +349,19 @@ exp: exp LOGIC level1 {
    free($1.code);
    free($2);
    free($3.code);
-}
-| level1 {
+} |
+
+level1 
+{
 
    $$.code = $1.code;
 
 };
-level1: level1 COMP level2 {
+
+level1: 
+
+level1 COMP level2 
+{
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($<value>2,">=") == 0)
       $$.code = concat_strings(temp,"geq\n");
@@ -262,13 +379,18 @@ level1: level1 COMP level2 {
    free($<value>2);
    free($3.code);
 
-}
-| level2 {
+} |
+
+level2 {
 
    $$.code = $1.code;
 
 };
-level2: level2 OP1 level3 {
+
+level2: 
+
+level2 OP1 level3 
+{
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"+") == 0)
       $$.code = concat_strings(temp,"ad\n");
@@ -279,16 +401,18 @@ level2: level2 OP1 level3 {
    free($1.code);
    free($2);
    free($3.code);
-}
-| level3 {
+} |
 
+level3 {
 
    $$.code = $1.code;
 
-
-
 };
-level3: level3 OP2 VALUE {
+
+level3:
+
+level3 OP2 VALUE 
+{
 
 
    char* temp = concat_strings($1.code,$3.code);
@@ -301,8 +425,10 @@ level3: level3 OP2 VALUE {
    free($1.code);
    free($2);
    free($3.code);
-} 
-| VALUE {
+} |
+
+VALUE 
+{
 
 
    $$.code = $1.code;
@@ -312,7 +438,11 @@ level3: level3 OP2 VALUE {
    //free($1.code);
    //free($1.name);
 };
-VALUE: ID {
+
+VALUE:
+
+ID 
+{
    if(!check_symbol_existence($<value>1)){
       yyerror("Variable does not exists");
       YYABORT;
@@ -323,7 +453,9 @@ VALUE: ID {
    //$$.name = $<value>1;
    //printf("%s\n",$$.name);
 } | 
-   '!' ID {
+
+'!' ID 
+{
       if(!check_symbol_existence($<value>2)){
       yyerror("Variable does not exists");
       YYABORT;
@@ -332,16 +464,17 @@ VALUE: ID {
    sprintf($$.code,"lod %s\nne\n",$<value>2);
    free($<value>2);
 
-   }
-|
-ID {
+} |
+
+ID 
+{
    if(!check_symbol_existence($<value>1)) {
       yyerror("Variable does not exists");
       YYERROR;
    }
- } '[' NUM_LIKE ']'
-
- {
+} 
+'[' NUM_LIKE ']'
+{
    
    $$.code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad\nloa\n";
@@ -350,28 +483,35 @@ ID {
    free($<value>1);
    free($4.code);
 
-} 
-| '(' exp ')' {
+} |
+
+'(' exp ')' 
+{
    $$.code = $2.code;
-   }
-| 
-'!' NUMERO {
+} | 
+
+'!' NUMERO 
+{
    $$.code = (char*) malloc(60);
    sprintf($$.code,"ldc %s\nne\n",$<value>2);
    free($<value>2);
    //$$.code = strdup("");
    //$$.name = $<value>1;
-}|
+} |
 
-
-NUMERO {
+NUMERO
+{
    $$.code = (char*) malloc(60);
    sprintf($$.code,"ldc %s\n",$<value>1);
    free($<value>1);
    //$$.code = strdup("");
    //$$.name = $<value>1;
 };
-NUM_LIKE: ID {
+
+NUM_LIKE: 
+
+ID 
+{
    if(!check_symbol_existence($<value>1)) {
       yyerror("Variable does not exists");
       YYERROR;
@@ -379,7 +519,10 @@ NUM_LIKE: ID {
    $$.code = (char*) malloc(60);
    sprintf($$.code,"lod %s\n",$<value>1);
    free($<value>1);
-} | NUMERO { 
+} | 
+
+NUMERO 
+{ 
    double num_d = atof($<value>1);
    int num_i = atoi($<value>1);
    if((int) ceil(num_d) != num_i){
@@ -395,7 +538,8 @@ NUM_LIKE: ID {
    free($<value>1);
    //$$.code = strdup("");
    //$$.name = $<value>1;
-}
+};
+
 LOGIC: AND {$$ = $<value>1;} | OR {$$ = $<value>1;};
 OP1: '+' {$$ = $<value>1;} | '-'  {$$ = $<value>1;};
 OP2: '*' {$$ = $<value>1;} | '/' {$$ = $<value>1;};

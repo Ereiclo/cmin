@@ -205,13 +205,7 @@ negate "!"
 {comentario} {
 
 }
-{lista_args} {
-    char* cleaned = strdup(yytext);
-    // remove_spaces(cleaned);
 
-
-    return LISTA_ARGS;
-}
 {cadena} {
     
     //valor de la cadena

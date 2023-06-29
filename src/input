@@ -1,5 +1,10 @@
 
+
+
 let a;
 let b;
 
-a = !b;
+
+if(b) b = 5;
+else if(a) a = b * 3;
+else a = 7;
