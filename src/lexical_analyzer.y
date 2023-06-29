@@ -81,10 +81,8 @@ CODE: CODE I {
 I: IN ';' {
    $$.code = $1.code;
 };
-IN: exp {
-   $$.code = $1.code;
-} 
-| ID {
+IN: 
+ ID {
    if(!check_symbol_existence($<value>1)) {
       yyerror("Variable does not exists");
       YYERROR;
@@ -105,6 +103,35 @@ IN: exp {
    free($<value>3);
    free($4.code);
 }|
+
+ID {
+   if(!check_symbol_existence($<value>1)) {
+      yyerror("Variable does not exists");
+      YYERROR;
+   }
+} '[' NUM_LIKE {
+
+   $<nodo>$.code = (char*) malloc(200);
+   char template_string[] = "lod %s\n%sad\n";
+   sprintf($<nodo>$.code,template_string,$<value>1,$4.code);
+
+   free($<value>1);
+   free($4.code);
+
+
+} ']'
+
+'='   exp {
+   char* temp = concat_strings($<nodo>5.code,$8.code);
+
+   $$.code = concat_strings(temp,"sto\n");
+
+   free(temp);
+   free($<nodo>5.code);
+   free($8.code);
+}
+
+|
 DECL {
    $$.code = $1.code;
 }
