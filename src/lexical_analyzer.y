@@ -1,13 +1,18 @@
 %{
    #include <stdio.h>
    #include <stdlib.h>
-   //#include <math.h>
+   #include <math.h>
    #include <string.h>
    int yylex(void);
    void yyerror(const char *s);
-   FILE *yyin;
-   int actual_temp = 0;
+   int push_symbol(char*symbol);
+   //FILE *yyin;
+   char** symbol_table;
+   int n_symbols = 0;
+   char** function_table[2];
+   int n_functions = 0;
 
+   int check_symbol_existence(char* symbol);
    char* concat_strings(char* dest, char* src){
 
       char* new_string = (char*) malloc(strlen(dest) + strlen(src) + 1);
@@ -100,23 +105,91 @@ DECL {
 }
 
 DECL: DECL ',' ID  {
+   if(check_symbol_existence($<value>3)){
+      yyerror("Variable already exists");
+      YYABORT; 
+   }
+
+
    char* temp = (char*) malloc(100);
 
    sprintf(temp,"new_var %s\n",$<value>3);
    $$.code = concat_strings($1.code,temp);
+   push_symbol($<value>3);
 
    free($<value>3);
    free($1.code);
    free(temp);
 
+} | DECL ',' ID '[' NUMERO ']' {
+   if(check_symbol_existence($<value>3)){
+      yyerror("Variable already exists");
+      YYABORT; 
+   }
+
+   double num_d = atof($<value>5);
+   int num_i = atoi($<value>5);
+   if((int) ceil(num_d) != num_i){
+      yyerror("Array size must be an integer");
+      YYABORT;
+   }else if(num_i < 1){
+      yyerror("Array size must be at least 1");
+      YYABORT;
+   }
+
+   char* temp = (char*) malloc(200);
+   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto\n";
+   sprintf(temp,template_string,$<value>3,$<value>3,num_i);
+
+   $$.code = concat_strings($1.code,temp);
+   push_symbol($<value>3);
+
+   free(temp);
+   free($<value>3);
+   free($<value>5);
 }
 | LET ID {
+   if(check_symbol_existence($<value>2)){
+      yyerror("Variable already exists");
+      YYABORT; 
+   }
+
+   
    $$.code = (char*) malloc(100);
    sprintf($$.code,"new_var %s\n",$<value>2);
+   push_symbol($<value>2);
 
    free($<value>2);
    
-} 
+} | LET ID '[' NUMERO ']' {
+   if(check_symbol_existence($<value>2)){
+      yyerror("Variable already exists");
+      YYABORT; 
+   }
+
+   double num_d = atof($<value>4);
+   int num_i = atoi($<value>4);
+   if((int) ceil(num_d) != num_i){
+      yyerror("Array size must be an integer");
+      YYABORT;
+   }else if(num_i < 1){
+      yyerror("Array size must be at least 1");
+      YYABORT;
+   }
+
+
+
+   $$.code = (char*) malloc(200);
+   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto\n";
+   sprintf($$.code,template_string,$<value>2,$<value>2,num_i);
+   push_symbol($<value>2);
+
+   
+
+   free($<value>2);
+   free($<value>4);
+
+}
 
 
 exp: exp LOGIC level1 {
