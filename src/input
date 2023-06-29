@@ -1,6 +1,5 @@
 
-let adios[1000];
-let a,b;
+let a;
+let b;
 
-b = 14;
-adios[0] = 5 - (b/10) == 20 || 3;
+a = !b;

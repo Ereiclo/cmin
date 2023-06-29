@@ -78,6 +78,7 @@ comp ">="|"<="|"<"|">"|"=="
 and "&&"
 or "||"
 cadena \"([^"]|{nada})*\"
+negate "!"
 
 
 
@@ -222,6 +223,11 @@ cadena \"([^"]|{nada})*\"
     //valor del numero
     yylval.value = strdup(yytext);
     return NUMERO;
+}
+
+{negate} {
+
+    return '!';
 }
 {nada}+ {//printf("encontro nada\n");
     }
