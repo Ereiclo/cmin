@@ -483,6 +483,18 @@ ID
    //printf("%s\n",$$.name);
 } | 
 
+'-' ID 
+{
+   if(!check_symbol_existence($<value>2)){
+      yyerror("Variable does not exists");
+      YYABORT;
+   }
+   $$.code = (char*) malloc(60);
+   sprintf($$.code,"lod %s\nldc -1\nmp\n",$<value>2);
+   free($<value>2);
+
+} |
+
 '!' ID 
 {
       if(!check_symbol_existence($<value>2)){
@@ -518,6 +530,16 @@ ID
 {
    $$.code = $2.code;
 } | 
+
+'-' NUMERO 
+{
+   $$.code = (char*) malloc(60);
+   sprintf($$.code,"ldc %s\nldc -1\nmp\n",$<value>2);
+   free($<value>2);
+   //$$.code = strdup("");
+   //$$.name = $<value>1;
+} |
+
 
 '!' NUMERO 
 {

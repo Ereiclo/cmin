@@ -1124,18 +1124,18 @@ YY_RULE_SETUP
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 226 "token_parser.l"
+#line 227 "token_parser.l"
 {//printf("encontro nada\n");
     }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 229 "token_parser.l"
+#line 230 "token_parser.l"
 {yyerror("Unexpected token"); return YYerror;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 232 "token_parser.l"
+#line 233 "token_parser.l"
 ECHO;
 	YY_BREAK
 #line 1142 "lex.yy.c"
@@ -2155,7 +2155,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 232 "token_parser.l"
+#line 233 "token_parser.l"
 
 
 

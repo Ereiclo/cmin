@@ -223,6 +223,7 @@ negate "!"
 
     return '!';
 }
+
 {nada}+ {//printf("encontro nada\n");
     }
 

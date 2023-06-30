@@ -4,12 +4,13 @@
 let b;
 let a;
 a = 10;
-b = 16;
+
+
 
 
 while(a >= 0){
 
-    a = a-1;
+    a = a-b;
     while(b/2 >= 4) b = b /2;
 
 }
