@@ -20,7 +20,7 @@ lod b
 lod iter
 ad 
 lod iter
-ldc 3
+ldc 3.2
 ad 
 sto 
 lod b
