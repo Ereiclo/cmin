@@ -44,8 +44,13 @@ void yyerror(const char *s) {
 
     //printf("\n%s\n", s);
 }
-void main(){
-    FILE *file = fopen("input", "r");
+void main(int argc,char**argv){
+    if(argc < 2){
+        printf("No file to compile\n");
+        exit(1);
+    }
+
+    FILE *file = fopen(argv[1], "r");
     out = fopen("exe.cm","w");
     parse(file);   
     fclose(file);
