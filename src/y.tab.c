@@ -1557,7 +1557,7 @@ yyreduce:
   case 2: /* S: CODE  */
 #line 72 "lexical_analyzer.y"
 {
-   printf("El codigo generado es:\n%s",(yyvsp[0].nodo).code);
+   //printf("El codigo generado es:\n%s",$1.code);
    fwrite((yyvsp[0].nodo).code,1,strlen((yyvsp[0].nodo).code),out);
 }
 #line 1564 "y.tab.c"

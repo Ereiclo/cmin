@@ -70,7 +70,7 @@ S:
 
 CODE
 {
-   printf("El codigo generado es:\n%s",$1.code);
+   //printf("El codigo generado es:\n%s",$1.code);
    fwrite($1.code,1,strlen($1.code),out);
 };
 
