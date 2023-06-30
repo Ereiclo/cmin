@@ -1,10 +1,15 @@
 
 
 
-let a;
 let b;
+let a;
+a = 10;
+b = 16;
 
 
-if(b) b = 5;
-else if(a) a = b * 3;
-else a = 7;
+while(a >= 0){
+
+    a = a-1;
+    while(b/2 >= 4) b = b /2;
+
+}

@@ -57,7 +57,7 @@
 
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I
-%type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P 
+%type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
 %define parse.error detailed
 
 %right "then" ELSE
@@ -166,7 +166,38 @@ DECL
    $$.code = strdup("");
 };
 
-SUB_CODE: IF_BLOCK {$$.code = $1.code;} | IF_ELSE_BLOCK {$$.code = $1.code;};
+SUB_CODE: IF_BLOCK {$$.code = $1.code;} | IF_ELSE_BLOCK {$$.code = $1.code;} | WHILE_BLOCK {$$.code = $1.code;};
+
+WHILE_BLOCK: 
+
+WHILE '(' exp ')' P 
+{
+   int start_label = actual_label++;
+   int end_label = actual_label++;
+
+   char* temp1 = malloc(100);
+   sprintf(temp1,"lab L%d\n",start_label);
+   char* temp2 = malloc(100);
+   sprintf(temp2,"ne\ntjp L%d\n",end_label);
+   char* temp3 = malloc(100);
+   sprintf(temp3,"ujp L%d\nlab L%d\n",start_label,end_label);
+
+   char*temp4 = concat_strings(temp1,$3.code);
+   char*temp5 = concat_strings(temp4,temp2);
+   char* temp6 = concat_strings($5.code,temp3);
+
+   $$.code = concat_strings(temp5,temp6);
+
+   free($3.code);
+   free($5.code);
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free(temp4);
+   free(temp5);
+   free(temp6);
+
+};
 
 
 IF_BLOCK: 
@@ -200,7 +231,6 @@ IF '(' exp ')' P %prec "then"
 IF_ELSE_BLOCK: 
 IF '(' exp ')' P ELSE P
 {
-
    int label_else = actual_label++;
    int label_end = actual_label++;
 
@@ -235,7 +265,6 @@ IF '(' exp ')' P ELSE P
    free(temp6);
 
 };
-
 
 P: I {$$.code = $1.code;} | '{' CODE '}' {$$.code = $2.code;}; | '{' '}' {$$.code =strdup("");}
 

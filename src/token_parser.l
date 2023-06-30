@@ -52,7 +52,7 @@ id [a-zA-Z]+[a-z0-9A-Z]*
 nada [ \t\n\r]
 comentario ("/*"([^*]|{nada})*"*/")|("//".*)
 fin_inst ";"
-numero "-"{0,1}([0-9]+("."[0-9]*){0,1})|"-"{0,1}("."[0-9]+)
+numero ([0-9]+("."[0-9]*){0,1})|"-"{0,1}("."[0-9]+)
 par_abierto "("
 par_cerrado ")"
 llave_abierta "{"

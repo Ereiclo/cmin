@@ -298,20 +298,21 @@ enum yysymbol_kind_t
   YYSYMBOL_50_2 = 50,                      /* $@2  */
   YYSYMBOL_51_3 = 51,                      /* @3  */
   YYSYMBOL_SUB_CODE = 52,                  /* SUB_CODE  */
-  YYSYMBOL_IF_BLOCK = 53,                  /* IF_BLOCK  */
-  YYSYMBOL_IF_ELSE_BLOCK = 54,             /* IF_ELSE_BLOCK  */
-  YYSYMBOL_P = 55,                         /* P  */
-  YYSYMBOL_DECL = 56,                      /* DECL  */
-  YYSYMBOL_exp = 57,                       /* exp  */
-  YYSYMBOL_level1 = 58,                    /* level1  */
-  YYSYMBOL_level2 = 59,                    /* level2  */
-  YYSYMBOL_level3 = 60,                    /* level3  */
-  YYSYMBOL_VALUE = 61,                     /* VALUE  */
-  YYSYMBOL_62_4 = 62,                      /* $@4  */
-  YYSYMBOL_NUM_LIKE = 63,                  /* NUM_LIKE  */
-  YYSYMBOL_LOGIC = 64,                     /* LOGIC  */
-  YYSYMBOL_OP1 = 65,                       /* OP1  */
-  YYSYMBOL_OP2 = 66                        /* OP2  */
+  YYSYMBOL_WHILE_BLOCK = 53,               /* WHILE_BLOCK  */
+  YYSYMBOL_IF_BLOCK = 54,                  /* IF_BLOCK  */
+  YYSYMBOL_IF_ELSE_BLOCK = 55,             /* IF_ELSE_BLOCK  */
+  YYSYMBOL_P = 56,                         /* P  */
+  YYSYMBOL_DECL = 57,                      /* DECL  */
+  YYSYMBOL_exp = 58,                       /* exp  */
+  YYSYMBOL_level1 = 59,                    /* level1  */
+  YYSYMBOL_level2 = 60,                    /* level2  */
+  YYSYMBOL_level3 = 61,                    /* level3  */
+  YYSYMBOL_VALUE = 62,                     /* VALUE  */
+  YYSYMBOL_63_4 = 63,                      /* $@4  */
+  YYSYMBOL_NUM_LIKE = 64,                  /* NUM_LIKE  */
+  YYSYMBOL_LOGIC = 65,                     /* LOGIC  */
+  YYSYMBOL_OP1 = 66,                       /* OP1  */
+  YYSYMBOL_OP2 = 67                        /* OP2  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -637,18 +638,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  16
+#define YYFINAL  19
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   78
+#define YYLAST   88
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  44
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  23
+#define YYNNTS  24
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  47
+#define YYNRULES  49
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  77
+#define YYNSTATES  83
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   284
@@ -701,10 +702,10 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,    69,    69,    76,    84,    91,    96,   106,   105,   131,
-     138,   130,   160,   165,   169,   169,   173,   201,   240,   240,
-     240,   244,   264,   293,   309,   340,   354,   363,   384,   392,
-     406,   414,   430,   444,   457,   470,   469,   488,   493,   502,
-     513,   524,   543,   543,   544,   544,   545,   545
+     138,   130,   160,   165,   169,   169,   169,   173,   204,   232,
+     269,   269,   269,   273,   293,   322,   338,   369,   383,   392,
+     413,   421,   435,   443,   459,   473,   486,   499,   498,   517,
+     522,   531,   542,   553,   572,   572,   573,   573,   574,   574
 };
 #endif
 
@@ -727,20 +728,20 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "WHILE", "IF", "ELSE", "COMP", "FIN", "ID", "LISTA_ARGS", "CADENA",
   "NUMERO", "DIV", "then", "';'", "'='", "'['", "']'", "'('", "')'", "'{'",
   "'}'", "','", "'!'", "'+'", "'-'", "'*'", "'/'", "$accept", "S", "CODE",
-  "I", "IN", "$@1", "$@2", "@3", "SUB_CODE", "IF_BLOCK", "IF_ELSE_BLOCK",
-  "P", "DECL", "exp", "level1", "level2", "level3", "VALUE", "$@4",
-  "NUM_LIKE", "LOGIC", "OP1", "OP2", YY_NULLPTR
+  "I", "IN", "$@1", "$@2", "@3", "SUB_CODE", "WHILE_BLOCK", "IF_BLOCK",
+  "IF_ELSE_BLOCK", "P", "DECL", "exp", "level1", "level2", "level3",
+  "VALUE", "$@4", "NUM_LIKE", "LOGIC", "OP1", "OP2", YY_NULLPTR
   };
   return yy_sname[yysymbol];
 }
 #endif
 
-#define YYPACT_NINF (-23)
+#define YYPACT_NINF (-52)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-36)
+#define YYTABLE_NINF (-38)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -749,14 +750,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      20,   -18,   -16,     5,    22,    12,   -23,    11,   -23,   -23,
-     -23,    13,    17,     0,    19,    23,   -23,   -23,   -23,    28,
-      16,    24,   -23,     0,   -13,   -12,    32,   -21,     3,   -23,
-       0,     4,    25,    26,    29,   -10,   -23,   -23,   -23,   -23,
-      -3,     0,     0,   -23,   -23,     0,   -23,   -23,     0,    33,
-     -23,   -23,   -23,    31,   -23,     4,   -23,   -11,   -23,    39,
-      32,   -21,     3,   -23,    34,    35,    36,   -23,    -8,    -3,
-      40,   -23,   -23,   -23,   -23,     0,    33
+      27,   -21,   -14,   -12,     7,    40,    24,   -52,    20,   -52,
+     -52,   -52,   -52,   -11,    31,    -1,    -1,    26,    32,   -52,
+     -52,   -52,    41,    42,    35,   -52,    -1,     5,   -10,    48,
+      15,    16,   -52,    -7,    -1,    25,    36,    38,    43,    -5,
+     -52,   -52,   -52,   -52,    17,    -1,    -1,   -52,   -52,    -1,
+     -52,   -52,    -1,    17,    46,   -52,   -52,   -52,    45,   -52,
+      25,   -52,    -6,   -52,   -52,    48,    15,    16,   -52,    52,
+      44,    47,    49,   -52,    -3,    17,    50,   -52,   -52,   -52,
+     -52,    -1,    46
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -764,30 +766,31 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-      13,     0,     0,     7,     0,     2,     4,     0,     6,    14,
-      15,    12,    23,     0,     0,     0,     1,     3,     5,     0,
-       0,    33,    39,     0,     0,     0,    26,    28,    30,    32,
-       0,     0,    21,     0,     0,     0,    34,    38,    42,    43,
-      13,     0,     0,    44,    45,     0,    46,    47,     0,     8,
-      40,    41,    10,     0,    24,     0,    37,    13,    18,    16,
-      25,    27,    29,    31,     0,     0,     0,    20,    13,    13,
-       0,    22,    36,    19,    17,     0,    11
+      13,     0,     0,     0,     7,     0,     2,     4,     0,     6,
+      16,    14,    15,    12,    25,     0,     0,     0,     0,     1,
+       3,     5,     0,     0,    35,    41,     0,     0,     0,    28,
+      30,    32,    34,     0,     0,     0,    23,     0,     0,     0,
+      36,    40,    44,    45,    13,     0,     0,    46,    47,     0,
+      48,    49,     0,    13,     8,    42,    43,    10,     0,    26,
+       0,    39,    13,    20,    17,    27,    29,    31,    33,    18,
+       0,     0,     0,    22,    13,    13,     0,    24,    38,    21,
+      19,     0,    11
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -23,   -23,     8,    -5,   -23,   -23,   -23,   -23,   -23,   -23,
-     -23,    -7,   -23,   -22,    37,    30,    21,    27,   -23,    15,
-     -23,   -23,   -23
+     -52,   -52,    14,     0,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   -51,   -52,   -15,    33,    37,    30,    34,   -52,
+      28,   -52,   -52,   -52
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,     6,     7,    14,    15,    64,     8,     9,
-      10,    59,    11,    25,    26,    27,    28,    29,    34,    52,
-      41,    45,    48
+       0,     5,     6,    63,     8,    17,    18,    70,     9,    10,
+      11,    12,    64,    13,    28,    29,    30,    31,    32,    38,
+      57,    45,    49,    52
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -795,60 +798,63 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      17,    35,    38,    39,    38,    39,    12,     1,    49,     2,
-       1,    36,     2,     3,    37,     1,     3,     2,    13,    43,
-      44,     3,    16,    40,    21,    56,    67,    22,    50,    73,
-       1,    51,     2,    57,    23,    58,     3,    -9,     1,    24,
-       2,    18,   -13,    33,     3,    46,    47,    38,    39,    20,
-      30,    19,    32,    76,    42,    31,   -35,    53,    65,    54,
-      69,    55,    74,    17,    58,    68,    62,    70,    71,    72,
-      66,    75,    61,     0,     0,    63,     0,     0,    60
+       7,    33,    69,    14,    42,    43,    20,    42,    43,    42,
+      43,    39,     1,     2,     3,     1,     2,     3,     4,    54,
+      15,     4,    16,    24,    80,    44,    25,    22,    53,    40,
+      61,    73,    41,    26,    79,     1,     2,     3,    27,    -9,
+      19,     4,     1,     2,     3,     1,     2,     3,     4,    55,
+      21,     4,    56,    62,   -13,    47,    48,    34,    50,    51,
+      42,    43,     7,    23,    35,    36,    82,   -37,    58,    37,
+      46,    59,    71,    75,    20,    60,    74,    76,    65,    67,
+      77,    81,    78,    66,     0,     0,    68,     0,    72
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,    23,    14,    15,    14,    15,    24,    18,    30,    20,
-      18,    24,    20,    24,    27,    18,    24,    20,    34,    40,
-      41,    24,     0,    35,    24,    35,    37,    27,    24,    37,
-      18,    27,    20,    36,    34,    40,    24,    32,    18,    39,
-      20,    30,    30,    27,    24,    42,    43,    14,    15,    32,
-      31,    38,    24,    75,    22,    32,    32,    32,    27,    33,
-      21,    32,    69,    68,    69,    57,    45,    33,    33,    33,
-      55,    31,    42,    -1,    -1,    48,    -1,    -1,    41
+       0,    16,    53,    24,    14,    15,     6,    14,    15,    14,
+      15,    26,    18,    19,    20,    18,    19,    20,    24,    34,
+      34,    24,    34,    24,    75,    35,    27,    38,    35,    24,
+      35,    37,    27,    34,    37,    18,    19,    20,    39,    32,
+       0,    24,    18,    19,    20,    18,    19,    20,    24,    24,
+      30,    24,    27,    36,    30,    40,    41,    31,    42,    43,
+      14,    15,    62,    32,    32,    24,    81,    32,    32,    27,
+      22,    33,    27,    21,    74,    32,    62,    33,    45,    49,
+      33,    31,    33,    46,    -1,    -1,    52,    -1,    60
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    18,    20,    24,    45,    46,    47,    48,    52,    53,
-      54,    56,    24,    34,    49,    50,     0,    47,    30,    38,
-      32,    24,    27,    34,    39,    57,    58,    59,    60,    61,
-      31,    32,    24,    27,    62,    57,    24,    27,    14,    15,
-      35,    64,    22,    40,    41,    65,    42,    43,    66,    57,
-      24,    27,    63,    32,    33,    32,    35,    36,    47,    55,
-      58,    59,    60,    61,    51,    27,    63,    37,    46,    21,
-      33,    33,    33,    37,    55,    31,    57
+       0,    18,    19,    20,    24,    45,    46,    47,    48,    52,
+      53,    54,    55,    57,    24,    34,    34,    49,    50,     0,
+      47,    30,    38,    32,    24,    27,    34,    39,    58,    59,
+      60,    61,    62,    58,    31,    32,    24,    27,    63,    58,
+      24,    27,    14,    15,    35,    65,    22,    40,    41,    66,
+      42,    43,    67,    35,    58,    24,    27,    64,    32,    33,
+      32,    35,    36,    47,    56,    59,    60,    61,    62,    56,
+      51,    27,    64,    37,    46,    21,    33,    33,    33,    37,
+      56,    31,    58
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    44,    45,    46,    46,    47,    47,    49,    48,    50,
-      51,    48,    48,    48,    52,    52,    53,    54,    55,    55,
-      55,    56,    56,    56,    56,    57,    57,    58,    58,    59,
-      59,    60,    60,    61,    61,    62,    61,    61,    61,    61,
-      63,    63,    64,    64,    65,    65,    66,    66
+      51,    48,    48,    48,    52,    52,    52,    53,    54,    55,
+      56,    56,    56,    57,    57,    57,    57,    58,    58,    59,
+      59,    60,    60,    61,    61,    62,    62,    63,    62,    62,
+      62,    62,    64,    64,    65,    65,    66,    66,    67,    67
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     2,     1,     2,     1,     0,     4,     0,
-       0,     8,     1,     0,     1,     1,     5,     7,     1,     3,
-       2,     3,     6,     2,     5,     3,     1,     3,     1,     3,
-       1,     3,     1,     1,     2,     0,     5,     3,     2,     1,
-       1,     1,     1,     1,     1,     1,     1,     1
+       0,     8,     1,     0,     1,     1,     1,     5,     5,     7,
+       1,     3,     2,     3,     6,     2,     5,     3,     1,     3,
+       1,     3,     1,     3,     1,     1,     2,     0,     5,     3,
+       2,     1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 
@@ -1537,7 +1543,7 @@ yyreduce:
 {
    printf("El codigo generado es:\n%s",(yyvsp[0].nodo).code);
 }
-#line 1541 "y.tab.c"
+#line 1547 "y.tab.c"
     break;
 
   case 3: /* CODE: CODE I  */
@@ -1548,7 +1554,7 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 1552 "y.tab.c"
+#line 1558 "y.tab.c"
     break;
 
   case 4: /* CODE: I  */
@@ -1556,7 +1562,7 @@ yyreduce:
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1560 "y.tab.c"
+#line 1566 "y.tab.c"
     break;
 
   case 5: /* I: IN ';'  */
@@ -1564,7 +1570,7 @@ yyreduce:
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 }
-#line 1568 "y.tab.c"
+#line 1574 "y.tab.c"
     break;
 
   case 6: /* I: SUB_CODE  */
@@ -1572,7 +1578,7 @@ yyreduce:
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1576 "y.tab.c"
+#line 1582 "y.tab.c"
     break;
 
   case 7: /* $@1: %empty  */
@@ -1583,7 +1589,7 @@ yyreduce:
          YYERROR;
       }
 }
-#line 1587 "y.tab.c"
+#line 1593 "y.tab.c"
     break;
 
   case 8: /* IN: ID $@1 '=' exp  */
@@ -1604,7 +1610,7 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 1608 "y.tab.c"
+#line 1614 "y.tab.c"
     break;
 
   case 9: /* $@2: %empty  */
@@ -1615,7 +1621,7 @@ yyreduce:
       YYERROR;
    }
 }
-#line 1619 "y.tab.c"
+#line 1625 "y.tab.c"
     break;
 
   case 10: /* @3: %empty  */
@@ -1631,7 +1637,7 @@ yyreduce:
 
 
 }
-#line 1635 "y.tab.c"
+#line 1641 "y.tab.c"
     break;
 
   case 11: /* IN: ID $@2 '[' NUM_LIKE @3 ']' '=' exp  */
@@ -1645,7 +1651,7 @@ yyreduce:
    free((yyvsp[-3].nodo).code);
    free((yyvsp[0].nodo).code);
 }
-#line 1649 "y.tab.c"
+#line 1655 "y.tab.c"
     break;
 
   case 12: /* IN: DECL  */
@@ -1653,7 +1659,7 @@ yyreduce:
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1657 "y.tab.c"
+#line 1663 "y.tab.c"
     break;
 
   case 13: /* IN: %empty  */
@@ -1661,23 +1667,61 @@ yyreduce:
        {
    (yyval.nodo).code = strdup("");
 }
-#line 1665 "y.tab.c"
+#line 1671 "y.tab.c"
     break;
 
   case 14: /* SUB_CODE: IF_BLOCK  */
 #line 169 "lexical_analyzer.y"
                    {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 1671 "y.tab.c"
+#line 1677 "y.tab.c"
     break;
 
   case 15: /* SUB_CODE: IF_ELSE_BLOCK  */
 #line 169 "lexical_analyzer.y"
                                                         {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 1677 "y.tab.c"
+#line 1683 "y.tab.c"
     break;
 
-  case 16: /* IF_BLOCK: IF '(' exp ')' P  */
+  case 16: /* SUB_CODE: WHILE_BLOCK  */
+#line 169 "lexical_analyzer.y"
+                                                                                           {(yyval.nodo).code = (yyvsp[0].nodo).code;}
+#line 1689 "y.tab.c"
+    break;
+
+  case 17: /* WHILE_BLOCK: WHILE '(' exp ')' P  */
 #line 174 "lexical_analyzer.y"
+{
+   int start_label = actual_label++;
+   int end_label = actual_label++;
+
+   char* temp1 = malloc(100);
+   sprintf(temp1,"lab L%d\n",start_label);
+   char* temp2 = malloc(100);
+   sprintf(temp2,"ne\ntjp L%d\n",end_label);
+   char* temp3 = malloc(100);
+   sprintf(temp3,"ujp L%d\nlab L%d\n",start_label,end_label);
+
+   char*temp4 = concat_strings(temp1,(yyvsp[-2].nodo).code);
+   char*temp5 = concat_strings(temp4,temp2);
+   char* temp6 = concat_strings((yyvsp[0].nodo).code,temp3);
+
+   (yyval.nodo).code = concat_strings(temp5,temp6);
+
+   free((yyvsp[-2].nodo).code);
+   free((yyvsp[0].nodo).code);
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free(temp4);
+   free(temp5);
+   free(temp6);
+
+}
+#line 1721 "y.tab.c"
+    break;
+
+  case 18: /* IF_BLOCK: IF '(' exp ')' P  */
+#line 205 "lexical_analyzer.y"
 {
 
    int label = actual_label++;
@@ -1703,13 +1747,12 @@ yyreduce:
    free(temp3);
    free(temp4);
 }
-#line 1707 "y.tab.c"
+#line 1751 "y.tab.c"
     break;
 
-  case 17: /* IF_ELSE_BLOCK: IF '(' exp ')' P ELSE P  */
-#line 202 "lexical_analyzer.y"
+  case 19: /* IF_ELSE_BLOCK: IF '(' exp ')' P ELSE P  */
+#line 233 "lexical_analyzer.y"
 {
-
    int label_else = actual_label++;
    int label_end = actual_label++;
 
@@ -1744,29 +1787,29 @@ yyreduce:
    free(temp6);
 
 }
-#line 1748 "y.tab.c"
+#line 1791 "y.tab.c"
     break;
 
-  case 18: /* P: I  */
-#line 240 "lexical_analyzer.y"
+  case 20: /* P: I  */
+#line 269 "lexical_analyzer.y"
      {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 1754 "y.tab.c"
+#line 1797 "y.tab.c"
     break;
 
-  case 19: /* P: '{' CODE '}'  */
-#line 240 "lexical_analyzer.y"
+  case 21: /* P: '{' CODE '}'  */
+#line 269 "lexical_analyzer.y"
                                          {(yyval.nodo).code = (yyvsp[-1].nodo).code;}
-#line 1760 "y.tab.c"
+#line 1803 "y.tab.c"
     break;
 
-  case 20: /* P: '{' '}'  */
-#line 240 "lexical_analyzer.y"
+  case 22: /* P: '{' '}'  */
+#line 269 "lexical_analyzer.y"
                                                                          {(yyval.nodo).code =strdup("");}
-#line 1766 "y.tab.c"
+#line 1809 "y.tab.c"
     break;
 
-  case 21: /* DECL: DECL ',' ID  */
-#line 245 "lexical_analyzer.y"
+  case 23: /* DECL: DECL ',' ID  */
+#line 274 "lexical_analyzer.y"
 {
    if(check_symbol_existence((yyvsp[0].value))){
       yyerror("Variable already exists");
@@ -1785,11 +1828,11 @@ yyreduce:
    free(temp);
 
 }
-#line 1789 "y.tab.c"
+#line 1832 "y.tab.c"
     break;
 
-  case 22: /* DECL: DECL ',' ID '[' NUMERO ']'  */
-#line 265 "lexical_analyzer.y"
+  case 24: /* DECL: DECL ',' ID '[' NUMERO ']'  */
+#line 294 "lexical_analyzer.y"
 {
    if(check_symbol_existence((yyvsp[-3].value))){
       yyerror("Variable already exists");
@@ -1817,11 +1860,11 @@ yyreduce:
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 1821 "y.tab.c"
+#line 1864 "y.tab.c"
     break;
 
-  case 23: /* DECL: LET ID  */
-#line 294 "lexical_analyzer.y"
+  case 25: /* DECL: LET ID  */
+#line 323 "lexical_analyzer.y"
 {
    if(check_symbol_existence((yyvsp[0].value))){
       yyerror("Variable already exists");
@@ -1836,11 +1879,11 @@ yyreduce:
    free((yyvsp[0].value));
    
 }
-#line 1840 "y.tab.c"
+#line 1883 "y.tab.c"
     break;
 
-  case 24: /* DECL: LET ID '[' NUMERO ']'  */
-#line 310 "lexical_analyzer.y"
+  case 26: /* DECL: LET ID '[' NUMERO ']'  */
+#line 339 "lexical_analyzer.y"
 {
    if(check_symbol_existence((yyvsp[-3].value))){
       yyerror("Variable already exists");
@@ -1867,11 +1910,11 @@ yyreduce:
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 1871 "y.tab.c"
+#line 1914 "y.tab.c"
     break;
 
-  case 25: /* exp: exp LOGIC level1  */
-#line 341 "lexical_analyzer.y"
+  case 27: /* exp: exp LOGIC level1  */
+#line 370 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"and") == 0)
@@ -1884,21 +1927,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 1888 "y.tab.c"
+#line 1931 "y.tab.c"
     break;
 
-  case 26: /* exp: level1  */
-#line 355 "lexical_analyzer.y"
+  case 28: /* exp: level1  */
+#line 384 "lexical_analyzer.y"
 {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 1898 "y.tab.c"
+#line 1941 "y.tab.c"
     break;
 
-  case 27: /* level1: level1 COMP level2  */
-#line 364 "lexical_analyzer.y"
+  case 29: /* level1: level1 COMP level2  */
+#line 393 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),">=") == 0)
@@ -1918,21 +1961,21 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 1922 "y.tab.c"
+#line 1965 "y.tab.c"
     break;
 
-  case 28: /* level1: level2  */
-#line 384 "lexical_analyzer.y"
+  case 30: /* level1: level2  */
+#line 413 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 1932 "y.tab.c"
+#line 1975 "y.tab.c"
     break;
 
-  case 29: /* level2: level2 OP1 level3  */
-#line 393 "lexical_analyzer.y"
+  case 31: /* level2: level2 OP1 level3  */
+#line 422 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"+") == 0)
@@ -1945,21 +1988,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 1949 "y.tab.c"
+#line 1992 "y.tab.c"
     break;
 
-  case 30: /* level2: level3  */
-#line 406 "lexical_analyzer.y"
+  case 32: /* level2: level3  */
+#line 435 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 1959 "y.tab.c"
+#line 2002 "y.tab.c"
     break;
 
-  case 31: /* level3: level3 OP2 VALUE  */
-#line 415 "lexical_analyzer.y"
+  case 33: /* level3: level3 OP2 VALUE  */
+#line 444 "lexical_analyzer.y"
 {
 
 
@@ -1974,11 +2017,11 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 1978 "y.tab.c"
+#line 2021 "y.tab.c"
     break;
 
-  case 32: /* level3: VALUE  */
-#line 431 "lexical_analyzer.y"
+  case 34: /* level3: VALUE  */
+#line 460 "lexical_analyzer.y"
 {
 
 
@@ -1989,11 +2032,11 @@ yyreduce:
    //free($1.code);
    //free($1.name);
 }
-#line 1993 "y.tab.c"
+#line 2036 "y.tab.c"
     break;
 
-  case 33: /* VALUE: ID  */
-#line 445 "lexical_analyzer.y"
+  case 35: /* VALUE: ID  */
+#line 474 "lexical_analyzer.y"
 {
    if(!check_symbol_existence((yyvsp[0].value))){
       yyerror("Variable does not exists");
@@ -2005,11 +2048,11 @@ yyreduce:
    //$$.name = $<value>1;
    //printf("%s\n",$$.name);
 }
-#line 2009 "y.tab.c"
+#line 2052 "y.tab.c"
     break;
 
-  case 34: /* VALUE: '!' ID  */
-#line 458 "lexical_analyzer.y"
+  case 36: /* VALUE: '!' ID  */
+#line 487 "lexical_analyzer.y"
 {
       if(!check_symbol_existence((yyvsp[0].value))){
       yyerror("Variable does not exists");
@@ -2020,22 +2063,22 @@ yyreduce:
    free((yyvsp[0].value));
 
 }
-#line 2024 "y.tab.c"
+#line 2067 "y.tab.c"
     break;
 
-  case 35: /* $@4: %empty  */
-#line 470 "lexical_analyzer.y"
+  case 37: /* $@4: %empty  */
+#line 499 "lexical_analyzer.y"
 {
    if(!check_symbol_existence((yyvsp[0].value))) {
       yyerror("Variable does not exists");
       YYERROR;
    }
 }
-#line 2035 "y.tab.c"
+#line 2078 "y.tab.c"
     break;
 
-  case 36: /* VALUE: ID $@4 '[' NUM_LIKE ']'  */
-#line 477 "lexical_analyzer.y"
+  case 38: /* VALUE: ID $@4 '[' NUM_LIKE ']'  */
+#line 506 "lexical_analyzer.y"
 {
    
    (yyval.nodo).code = (char*) malloc(200);
@@ -2046,19 +2089,19 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 2050 "y.tab.c"
+#line 2093 "y.tab.c"
     break;
 
-  case 37: /* VALUE: '(' exp ')'  */
-#line 489 "lexical_analyzer.y"
+  case 39: /* VALUE: '(' exp ')'  */
+#line 518 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 }
-#line 2058 "y.tab.c"
+#line 2101 "y.tab.c"
     break;
 
-  case 38: /* VALUE: '!' NUMERO  */
-#line 494 "lexical_analyzer.y"
+  case 40: /* VALUE: '!' NUMERO  */
+#line 523 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"ldc %s\nne\n",(yyvsp[0].value));
@@ -2066,11 +2109,11 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2070 "y.tab.c"
+#line 2113 "y.tab.c"
     break;
 
-  case 39: /* VALUE: NUMERO  */
-#line 503 "lexical_analyzer.y"
+  case 41: /* VALUE: NUMERO  */
+#line 532 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"ldc %s\n",(yyvsp[0].value));
@@ -2078,11 +2121,11 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2082 "y.tab.c"
+#line 2125 "y.tab.c"
     break;
 
-  case 40: /* NUM_LIKE: ID  */
-#line 514 "lexical_analyzer.y"
+  case 42: /* NUM_LIKE: ID  */
+#line 543 "lexical_analyzer.y"
 {
    if(!check_symbol_existence((yyvsp[0].value))) {
       yyerror("Variable does not exists");
@@ -2092,11 +2135,11 @@ yyreduce:
    sprintf((yyval.nodo).code,"lod %s\n",(yyvsp[0].value));
    free((yyvsp[0].value));
 }
-#line 2096 "y.tab.c"
+#line 2139 "y.tab.c"
     break;
 
-  case 41: /* NUM_LIKE: NUMERO  */
-#line 525 "lexical_analyzer.y"
+  case 43: /* NUM_LIKE: NUMERO  */
+#line 554 "lexical_analyzer.y"
 { 
    double num_d = atof((yyvsp[0].value));
    int num_i = atoi((yyvsp[0].value));
@@ -2114,47 +2157,47 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2118 "y.tab.c"
+#line 2161 "y.tab.c"
     break;
 
-  case 42: /* LOGIC: AND  */
-#line 543 "lexical_analyzer.y"
+  case 44: /* LOGIC: AND  */
+#line 572 "lexical_analyzer.y"
            {(yyval.value) = (yyvsp[0].value);}
-#line 2124 "y.tab.c"
+#line 2167 "y.tab.c"
     break;
 
-  case 43: /* LOGIC: OR  */
-#line 543 "lexical_analyzer.y"
+  case 45: /* LOGIC: OR  */
+#line 572 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2130 "y.tab.c"
+#line 2173 "y.tab.c"
     break;
 
-  case 44: /* OP1: '+'  */
-#line 544 "lexical_analyzer.y"
+  case 46: /* OP1: '+'  */
+#line 573 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2136 "y.tab.c"
+#line 2179 "y.tab.c"
     break;
 
-  case 45: /* OP1: '-'  */
-#line 544 "lexical_analyzer.y"
+  case 47: /* OP1: '-'  */
+#line 573 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2142 "y.tab.c"
+#line 2185 "y.tab.c"
     break;
 
-  case 46: /* OP2: '*'  */
-#line 545 "lexical_analyzer.y"
+  case 48: /* OP2: '*'  */
+#line 574 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2148 "y.tab.c"
+#line 2191 "y.tab.c"
     break;
 
-  case 47: /* OP2: '/'  */
-#line 545 "lexical_analyzer.y"
+  case 49: /* OP2: '/'  */
+#line 574 "lexical_analyzer.y"
                                  {(yyval.value) = (yyvsp[0].value);}
-#line 2154 "y.tab.c"
+#line 2197 "y.tab.c"
     break;
 
 
-#line 2158 "y.tab.c"
+#line 2201 "y.tab.c"
 
       default: break;
     }
@@ -2378,7 +2421,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 547 "lexical_analyzer.y"
+#line 576 "lexical_analyzer.y"
 
 
 
