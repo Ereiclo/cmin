@@ -1,0 +1,253 @@
+#!/usr/bin/python
+import sys
+
+
+def get_labels(instrs):
+    labels_dicc = {}
+
+
+    for i in range(len(instrs)):
+        complete_instr = instrs[i]
+        if "lab" in complete_instr:
+            _,label = complete_instr.split(' ')
+            labels_dicc[label] = i
+    
+    return labels_dicc
+
+def get_instrs():
+
+    try:
+        _,exe_file  = sys.argv
+    except:
+        print("There is not file in args")
+        sys.exit(1)
+
+
+    instrs_file = open(exe_file)
+    instrs = instrs_file.read().splitlines()
+
+    instrs_file.close()
+
+    return instrs
+
+def new_var(value,stack,memory,variable_table):
+
+    variable_table[-1][value] = len(memory)
+    memory.append(0)
+
+def new_arr(value,stack,memory,variable_table):
+
+
+    stack.append(len(memory))
+
+    for _ in range(int(value)):
+        memory.append(0)
+
+def lda(value,stack,memory,variable_table):
+    stack.append(variable_table[-1][value])
+
+def ldc(value,stack,memory,variable_table):
+    stack.append(float(value))
+
+
+def sto(value,stack,memory,variable_table):
+    constant = stack.pop()
+    address = int(stack.pop())
+
+    memory[address] = constant
+
+def lod(value,stack,memory,variable_table):
+    stack.append(memory[variable_table[-1][value]])
+
+
+def loa(value,stack,memory,variable_table):
+    address = int(stack.pop())
+
+    stack.append(memory[address])
+
+def tjp(value,stack,memory,variable_table):
+    return stack.pop()
+
+def print_s(value,stack,memory,variable_table):
+    transformed_string = value.replace('\\n','\n')
+    print(transformed_string,end='')
+
+def print_c(value,stack,memory,variable_table):
+    constant = stack.pop()
+    if(constant.is_integer()):
+        print(int(constant),end='')
+    else:
+        print(constant,end='')
+
+
+
+
+def land(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first and second)
+
+def lor(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first or second)
+
+def le(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first < second)
+
+def ge(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first > second)
+
+
+def geq(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first >= second)
+
+def leq(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first <= second)
+
+
+def equi(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first == second)
+
+
+
+def ad(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first + second)
+
+
+def sb(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first - second)
+
+def mp(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first * second)
+
+
+def dv(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first * second)
+
+def mod(value,stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first % second)
+
+
+def ne(value,stack,memory,variable_table):
+    first = stack.pop()
+
+    stack.append(not first)
+
+
+
+
+
+
+operations = {'new_var':new_var,
+              'new_arr':new_arr,
+              'lda':lda,
+              'ldc':ldc,
+              'sto':sto,
+              'loa':loa,
+              'lod':lod,
+              'tjp':tjp,
+              'print_s':print_s,
+              'print_c':print_c,
+              'geq':geq,
+              'leq':leq,
+              'land':land,
+              'lor':lor,
+              'le':le,
+              'ge':ge,
+              'equi':equi,
+              'ad':ad,
+              'sb':sb,
+              'mp':mp,
+              'dv':dv,
+              'mod':mod,
+              'ne':ne}
+
+instrs = get_instrs()
+labels_dicc = get_labels(instrs)
+stack = []
+memory = []
+variable_table = [{}] #un diccionario para cada scope (función)
+
+
+# print(labels_dicc)
+
+
+print("Output: ")
+
+actual_instr = 0
+
+while actual_instr != len(instrs):
+    instr,value = instrs[actual_instr].split(' ',1)
+
+    # if instr == "loa":
+    #     print(instrs[actual_instr-2])
+    #     print(instrs[actual_instr-1])
+    #     print(stack)
+
+
+    if instr == "lab":
+        # print("found lab",value,"skipping...")
+        actual_instr += 1
+        continue
+    elif instr == "tjp":
+        jump = operations["tjp"](value,stack,memory,variable_table)
+        if jump:
+            # print("jump to",value)
+            actual_instr = labels_dicc[value]
+        else:
+            # print("no jump to",value)
+            actual_instr += 1
+        continue
+    elif instr == "ujp":
+        # print("jump to",value)
+        actual_instr = labels_dicc[value]
+        continue
+
+    # print('intr: ',instr)
+    # print('stack:',stack)
+    # print('memory:',memory)
+    # print('variable table:',variable_table[-1])
+    
+    operations[instr](value,stack,memory,variable_table)
+
+    actual_instr += 1
+
+
+
+print("\n----------------------------------")
+print("Final variable table: ",variable_table[-1])
+print("Final memory: ",memory)
+

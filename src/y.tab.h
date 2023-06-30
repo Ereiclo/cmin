@@ -119,7 +119,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 50 "lexical_analyzer.y"
+#line 51 "lexical_analyzer.y"
 
     int num;
     ls lista;

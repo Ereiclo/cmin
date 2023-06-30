@@ -36,7 +36,6 @@ void parse(FILE *file) {
    create_symbol_table(1000,100);
    yyin = file;
    yyparse();
-   fclose(yyin);
 }
 
 
@@ -47,5 +46,8 @@ void yyerror(const char *s) {
 }
 void main(){
     FILE *file = fopen("input", "r");
+    out = fopen("exe.cm","w");
     parse(file);   
+    fclose(file);
+    fclose(out);
 }

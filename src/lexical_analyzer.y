@@ -7,6 +7,7 @@
    void yyerror(const char *s);
    int push_symbol(char*symbol);
    //FILE *yyin;
+   FILE *out;
    char** symbol_table;
    int n_symbols = 0;
    char** function_table[2];
@@ -70,6 +71,7 @@ S:
 CODE
 {
    printf("El codigo generado es:\n%s",$1.code);
+   fwrite($1.code,1,strlen($1.code),out);
 };
 
 CODE:
@@ -119,7 +121,7 @@ ID
                                     //eso cuenta como si fuera un symbolo mas
    char* temp2 = concat_strings(temp1,$4.code);
 
-   $$.code = concat_strings(temp2,"sto\n");
+   $$.code = concat_strings(temp2,"sto \n");
 
    free(temp1);
    free(temp2);
@@ -139,7 +141,7 @@ ID
 {
 
    $<nodo>$.code = (char*) malloc(200);
-   char template_string[] = "lod %s\n%sad\n";
+   char template_string[] = "lod %s\n%sad \n";
    sprintf($<nodo>$.code,template_string,$<value>1,$4.code);
 
    free($<value>1);
@@ -151,7 +153,7 @@ ID
 {
    char* temp = concat_strings($<nodo>5.code,$8.code);
 
-   $$.code = concat_strings(temp,"sto\n");
+   $$.code = concat_strings(temp,"sto \n");
 
    free(temp);
    free($<nodo>5.code);
@@ -176,7 +178,7 @@ PRINT '(' LISTA_ARGS_PRINT ')'
 LISTA_ARGS_PRINT: 
 LISTA_ARGS_PRINT ',' exp 
 {
-   char* temp = concat_strings($3.code,"print_c\n");
+   char* temp = concat_strings($3.code,"print_c \n");
 
    $$.code = concat_strings($1.code,temp);
 
@@ -209,7 +211,7 @@ CADENA
 exp
 {
 
-   $$.code = concat_strings($1.code,"print_c\n");
+   $$.code = concat_strings($1.code,"print_c \n");
 
    free($1.code);
 
@@ -229,7 +231,7 @@ WHILE '(' exp ')' P
    char* temp1 = malloc(100);
    sprintf(temp1,"lab L%d\n",start_label);
    char* temp2 = malloc(100);
-   sprintf(temp2,"ne\ntjp L%d\n",end_label);
+   sprintf(temp2,"ne \ntjp L%d\n",end_label);
    char* temp3 = malloc(100);
    sprintf(temp3,"ujp L%d\nlab L%d\n",start_label,end_label);
 
@@ -258,7 +260,7 @@ IF '(' exp ')' P %prec "then"
    int label = actual_label++;
 
    char* temp1 = malloc(100);
-   sprintf(temp1,"ne\ntjp L%d\n",label);
+   sprintf(temp1,"ne \ntjp L%d\n",label);
 
    char* temp2 = malloc(100);
    sprintf(temp2,"lab L%d\n",label);
@@ -286,7 +288,7 @@ IF '(' exp ')' P ELSE P
    int label_end = actual_label++;
 
    char* temp1 = malloc(100);
-   sprintf(temp1,"ne\ntjp L%d\n",label_else);
+   sprintf(temp1,"ne \ntjp L%d\n",label_else);
 
    char* temp2 = malloc(100);
    sprintf(temp2,"ujp L%d\nlab L%d\n",label_end,label_else);
@@ -359,7 +361,7 @@ DECL ',' ID '[' NUMERO ']'
    }
 
    char* temp = (char*) malloc(200);
-   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto\n";
+   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto \n";
    sprintf(temp,template_string,$<value>3,$<value>3,num_i);
 
    $$.code = concat_strings($1.code,temp);
@@ -406,7 +408,7 @@ LET ID '[' NUMERO ']'
 
 
    $$.code = (char*) malloc(200);
-   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto\n";
+   char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto \n";
    sprintf($$.code,template_string,$<value>2,$<value>2,num_i);
    push_symbol($<value>2);
 
@@ -421,9 +423,9 @@ exp LOGIC level1
 {
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"and") == 0)
-      $$.code = concat_strings(temp,"land\n");
+      $$.code = concat_strings(temp,"land \n");
    else if(strcmp($2,"or") == 0)
-      $$.code = concat_strings(temp,"lor\n");
+      $$.code = concat_strings(temp,"lor \n");
 
    free(temp);
    free($1.code);
@@ -444,15 +446,15 @@ level1 COMP level2
 {
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($<value>2,">=") == 0)
-      $$.code = concat_strings(temp,"geq\n");
+      $$.code = concat_strings(temp,"geq \n");
    else if(strcmp($<value>2,"<=") == 0)
-      $$.code = concat_strings(temp,"leq\n");
+      $$.code = concat_strings(temp,"leq \n");
    else if(strcmp($<value>2,"<") == 0)
-      $$.code = concat_strings(temp,"le\n");
+      $$.code = concat_strings(temp,"le \n");
    else if(strcmp($<value>2,">") == 0)
-      $$.code = concat_strings(temp,"ge\n");
+      $$.code = concat_strings(temp,"ge \n");
    else if(strcmp($<value>2,"==") == 0)
-      $$.code = concat_strings(temp,"equi\n");
+      $$.code = concat_strings(temp,"equi \n");
 
    free(temp);
    free($1.code);
@@ -473,9 +475,9 @@ level2 OP1 level3
 {
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"+") == 0)
-      $$.code = concat_strings(temp,"ad\n");
+      $$.code = concat_strings(temp,"ad \n");
    else if(strcmp($2,"-") == 0)
-      $$.code = concat_strings(temp,"sb\n");
+      $$.code = concat_strings(temp,"sb \n");
 
    free(temp);
    free($1.code);
@@ -497,13 +499,13 @@ level3 OP2 VALUE
 
    char* temp = concat_strings($1.code,$3.code);
    if(strcmp($2,"*") == 0)
-      $$.code = concat_strings(temp,"mp\n");
+      $$.code = concat_strings(temp,"mp \n");
    else if(strcmp($2,"/") == 0)
-      $$.code = concat_strings(temp,"dv\n");
+      $$.code = concat_strings(temp,"dv \n");
    else if(strcmp($2,"%") == 0)
-      $$.code = concat_strings(temp,"mod\n");
-   else if(strcmp($2,"//") == 0)
-      $$.code = concat_strings(temp,"dvf\n");
+      $$.code = concat_strings(temp,"mod \n");
+   //else if(strcmp($2,"//") == 0)
+   //   $$.code = concat_strings(temp,"dvf \n");
 
    free(temp);
    free($1.code);
@@ -545,7 +547,7 @@ ID
       YYABORT;
    }
    $$.code = (char*) malloc(60);
-   sprintf($$.code,"lod %s\nldc -1\nmp\n",$<value>2);
+   sprintf($$.code,"lod %s\nldc -1\nmp \n",$<value>2);
    free($<value>2);
 
 } |
@@ -557,7 +559,7 @@ ID
       YYABORT;
    }
    $$.code = (char*) malloc(60);
-   sprintf($$.code,"lod %s\nne\n",$<value>2);
+   sprintf($$.code,"lod %s\nne \n",$<value>2);
    free($<value>2);
 
 } |
@@ -573,7 +575,7 @@ ID
 {
    
    $$.code = (char*) malloc(200);
-   char template_string[] = "lod %s\n%sad\nloa\n";
+   char template_string[] = "lod %s\n%sad \nloa \n";
    sprintf($$.code,template_string,$<value>1,$4.code);
 
    free($<value>1);
@@ -589,7 +591,7 @@ ID
 '-' NUMERO 
 {
    $$.code = (char*) malloc(60);
-   sprintf($$.code,"ldc %s\nldc -1\nmp\n",$<value>2);
+   sprintf($$.code,"ldc %s\nldc -1\nmp \n",$<value>2);
    free($<value>2);
    //$$.code = strdup("");
    //$$.name = $<value>1;
@@ -599,7 +601,7 @@ ID
 '!' NUMERO 
 {
    $$.code = (char*) malloc(60);
-   sprintf($$.code,"ldc %s\nne\n",$<value>2);
+   sprintf($$.code,"ldc %s\nne \n",$<value>2);
    free($<value>2);
    //$$.code = strdup("");
    //$$.name = $<value>1;
