@@ -80,6 +80,7 @@ and "&&"
 or "||"
 cadena \"([^"]|{nada})*\"
 negate "!"
+print_keyword print
 
 
 
@@ -89,6 +90,10 @@ negate "!"
 
 %%
 
+
+{print_keyword} {
+    return PRINT;
+}
 
 {return_keyword} {
     
@@ -214,7 +219,12 @@ negate "!"
 
 {cadena} {
     
-    //valor de la cadena
+    //valor de la cadena (quitando comillas)
+    int length = strlen(yytext);
+    yylval.value = malloc( length - 1 );
+    memcpy(yylval.value,&yytext[1],length-2);
+    yylval.value[length-2] = '\0';
+
     return CADENA;
 }
 {numero} {

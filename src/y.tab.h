@@ -76,10 +76,10 @@ extern int yydebug;
     COMP = 277,                    /* COMP  */
     FIN = 278,                     /* FIN  */
     ID = 279,                      /* ID  */
-    LISTA_ARGS = 280,              /* LISTA_ARGS  */
-    CADENA = 281,                  /* CADENA  */
-    NUMERO = 282,                  /* NUMERO  */
-    DIV = 283                      /* DIV  */
+    CADENA = 280,                  /* CADENA  */
+    NUMERO = 281,                  /* NUMERO  */
+    DIV = 282,                     /* DIV  */
+    PRINT = 283                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -110,19 +110,19 @@ extern int yydebug;
 #define COMP 277
 #define FIN 278
 #define ID 279
-#define LISTA_ARGS 280
-#define CADENA 281
-#define NUMERO 282
-#define DIV 283
+#define CADENA 280
+#define NUMERO 281
+#define DIV 282
+#define PRINT 283
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 49 "lexical_analyzer.y"
+#line 50 "lexical_analyzer.y"
 
-    tipot estru;
     int num;
+    ls lista;
     node nodo;
     char* value;
 

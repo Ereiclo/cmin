@@ -28,10 +28,11 @@
 %}
 
 %{
-   typedef   struct {
-      char* tipo;
+
+   typedef struct{
+      char** values;
       int tamanio;
-   } tipot;
+   } ls;
 
    typedef struct{
       char* code; 
@@ -44,11 +45,11 @@
 %token RETURN FUNCTION PAR_ABIERTO PAR_CERRADO
 %token LLAVE_ABIERTA LLAVE_CERRADA SUMA COMA IGUAL
 %token MULT RESTA AND OR CEIL FLOOR LET WHILE IF ELSE COMP FIN
-%token ID LISTA_ARGS CADENA NUMERO DIV
+%token ID CADENA NUMERO DIV PRINT
 
 %union {
-    tipot estru;
     int num;
+    ls lista;
     node nodo;
     char* value;
 
@@ -56,7 +57,7 @@
 
 
 %type<value> OP1 OP2 LOGIC 
-%type<nodo> exp level1 level2 level3 CODE IN I
+%type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
 %define parse.error detailed
 
@@ -162,9 +163,59 @@ DECL
    $$.code = $1.code;
 } |
 
+PRINT '(' LISTA_ARGS_PRINT ')'
+{
+   $$.code = $3.code;
+
+} |
+
 %empty {
    $$.code = strdup("");
 };
+
+LISTA_ARGS_PRINT: 
+LISTA_ARGS_PRINT ',' exp 
+{
+   char* temp = concat_strings($3.code,"print_c\n");
+
+   $$.code = concat_strings($1.code,temp);
+
+   free($1.code);
+   free($3.code);
+
+} | 
+
+LISTA_ARGS_PRINT ',' CADENA 
+{
+   char* temp = malloc(200);
+
+   sprintf(temp,"print_s %s\n",$<value>3);
+   $$.code = concat_strings($1.code,temp);
+
+   free(temp);
+   free($<value>3);
+
+} | 
+
+CADENA 
+{
+   $$.code = malloc(200);
+   sprintf($$.code,"print_s %s\n",$<value>1);
+
+   free($<value>1);
+
+} | 
+
+exp
+{
+
+   $$.code = concat_strings($1.code,"print_c\n");
+
+   free($1.code);
+
+}
+
+
 
 SUB_CODE: IF_BLOCK {$$.code = $1.code;} | IF_ELSE_BLOCK {$$.code = $1.code;} | WHILE_BLOCK {$$.code = $1.code;};
 
