@@ -73,6 +73,7 @@ igual "="
 mult "*"
 resta "-"
 suma "+"
+mod "%"
 div "/"
 comp ">="|"<="|"<"|">"|"=="
 and "&&"
@@ -153,6 +154,11 @@ negate "!"
     
     yylval.value = strdup("-");
     return '-';
+}
+{mod} {
+    
+    yylval.value = strdup("%");
+    return '%';
 }
 {and} {
     

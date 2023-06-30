@@ -449,6 +449,10 @@ level3 OP2 VALUE
       $$.code = concat_strings(temp,"mp\n");
    else if(strcmp($2,"/") == 0)
       $$.code = concat_strings(temp,"dv\n");
+   else if(strcmp($2,"%") == 0)
+      $$.code = concat_strings(temp,"mod\n");
+   else if(strcmp($2,"//") == 0)
+      $$.code = concat_strings(temp,"dvf\n");
 
    free(temp);
    free($1.code);
@@ -593,7 +597,7 @@ NUMERO
 
 LOGIC: AND {$$ = $<value>1;} | OR {$$ = $<value>1;};
 OP1: '+' {$$ = $<value>1;} | '-'  {$$ = $<value>1;};
-OP2: '*' {$$ = $<value>1;} | '/' {$$ = $<value>1;};
+OP2: '*' {$$ = $<value>1;} | '/' {$$ = $<value>1;} |'%' {$$ = $<value>1;};
 
 %%
 
