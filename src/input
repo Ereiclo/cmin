@@ -1,29 +1,54 @@
 
-function sum(a,b);
+function createArray(n);
+function printArray(n);
 
-function printLine(elem);
+function createArray(n){
+    print("n es ",n);
+    let a[10];
 
-function sum(a,b){
+    let i;
 
-    return a + b;
+    i = 0;
+
+    while(i < n){
+        a[i] = i;    
+
+
+        i = i + 1;
+    }
+
+
+    return a;
+
 }
 
-function printLine(elem){
-    print(elem,"\n");
+function printArray(a,n){
+    let i;
+
+    i = 0;
+
+    while(i < n){
+        print("El elemento en la posicion ",i," tiene valor: ",a[i],"\n");
+        i = i + 1;
+    }
+
+    
+
+
 }
 
 
 function main(){
-    let x,y;
 
-    x = 100;
-    y = 50;
+    let a,n;
+    n = 10;
 
-    printLine(1253);
-    
 
-    print("La suma es: ",sum(x,y));
+    a = createArray(n);
 
+    print("\n",a);
+
+    printArray(a,n);
 }
 
 

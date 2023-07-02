@@ -118,7 +118,7 @@ FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}'
    //hacer validaciones
    char* temp1 = malloc(100);
 
-   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+   sprintf(temp1,"lab $%s\nscope \n",$<value>2);
 
    char*temp2 = concat_strings(temp1,$4.code);
 
@@ -138,59 +138,11 @@ FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}'
 
 } | 
 
-FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE RETURN exp ';' '}' 
-{
-   char* temp1 = malloc(100);
-
-   sprintf(temp1,"label $%s\nscope \n",$<value>2);
-
-   char*temp2 = concat_strings(temp1,$4.code);
-
-   char* temp3 = concat_strings(temp2,$7.code);
-
-   char* temp4 = concat_strings(temp3,$9.code);
-
-   $$.code = concat_strings(temp4,"endscope \nreturn_jp \n");
-
-
-   free(temp1);
-   free(temp2);
-   free(temp3);
-   free(temp4);
-   free($<value>2);
-   free($4.code);
-   free($7.code);
-   free($9.code);
-
-} |
-
-FUNCTION ID '(' LISTA_ARGS_DEF ')' '{'  RETURN exp ';' '}' 
-{
-   char* temp1 = malloc(100);
-
-   sprintf(temp1,"label $%s\nscope \n",$<value>2);
-
-   char*temp2 = concat_strings(temp1,$4.code);
-
-   char* temp3 = concat_strings(temp2,$8.code);
-
-   $$.code = concat_strings(temp3,"endscope \nreturn_jp \n");
-
-
-   free(temp1);
-   free(temp2);
-   free(temp3);
-   free($<value>2);
-   free($4.code);
-   free($8.code);
-
-} | 
-
 FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' '}'
 {
    char* temp1 = malloc(100);
 
-   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+   sprintf(temp1,"lab $%s\nscope \n",$<value>2);
 
    char*temp2 = concat_strings(temp1,$4.code);
 
@@ -209,7 +161,7 @@ FUNCT_MAIN:
 
 FUNCTION MAIN '(' ')' '{' CODE '}'
 {
-   char* temp = concat_strings("label $main\nscope \n",$6.code);
+   char* temp = concat_strings("lab $main\nscope \n",$6.code);
 
    $$.code = concat_strings(temp,"endscope \n");
 
@@ -222,7 +174,7 @@ FUNCTION MAIN '(' ')' '{' CODE '}'
 
 FUNCTION MAIN '(' ')' '{' '}'
 {
-   $$.code = strdup("label $main\nscope \nendscope \n");
+   $$.code = strdup("lab $main\nscope \nendscope \n");
 
 };
 
@@ -368,6 +320,14 @@ PRINT '(' LISTA_ARGS_PRINT ')'
    $$.code = $3.code;
 
 } |
+
+RETURN exp {
+   //no hacerlo en main
+   $$.code = concat_strings($2.code,"endscope \nreturn_jp \n");
+
+   free($2.code);
+
+} | 
 
 %empty {
    $$.code = strdup("");
@@ -573,8 +533,8 @@ DECL ',' ID '[' NUMERO ']'
 LET ID 
 {
    if(check_symbol_existence($<value>2)){
-      yyerror("Variable already exists");
-      YYABORT; 
+      // yyerror("Variable already exists");
+      // YYABORT; 
    }
 
    

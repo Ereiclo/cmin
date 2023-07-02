@@ -1,9 +1,51 @@
 ujp $main
-label $sum
+lab $createArray
 scope 
 sto 
-new_var b
-lda b
+new_var n
+lda n
+lod $
+sto 
+print_s n es 
+lod n
+print_c 
+new_var a
+lda a
+new_arr 10
+sto 
+new_var i
+lda i
+ldc 0
+sto 
+lab L0
+lod i
+lod n
+le 
+ne 
+tjp L1
+lod a
+lod i
+ad 
+lod i
+sto 
+lda i
+lod i
+ldc 1
+ad 
+sto 
+ujp L0
+lab L1
+lod a
+endscope 
+return_jp 
+ldc 0
+endscope 
+return_jp 
+lab $printArray
+scope 
+sto 
+new_var n
+lda n
 lod $
 sto 
 sto 
@@ -11,43 +53,55 @@ new_var a
 lda a
 lod $
 sto 
+new_var i
+lda i
+ldc 0
+sto 
+lab L2
+lod i
+lod n
+le 
+ne 
+tjp L3
+print_s El elemento en la posicion 
+lod i
+print_c 
+print_s  tiene valor: 
 lod a
-lod b
+lod i
 ad 
-endscope 
-return_jp 
-label $printLine
-scope 
-sto 
-new_var elem
-lda elem
-lod $
-sto 
-lod elem
+loa 
 print_c 
 print_s \n
+lda i
+lod i
+ldc 1
+ad 
+sto 
+ujp L2
+lab L3
 ldc 0
 endscope 
 return_jp 
-label $main
+lab $main
 scope 
-new_var x
-new_var y
-lda x
-ldc 100
+new_var a
+new_var n
+lda n
+ldc 10
 sto 
-lda y
-ldc 50
+lda a
+lda $
+lod n
+call_jp $createArray
 sto 
-lda $
-ldc 1253
-call_jp $printLine
-pop 
-print_s La suma es: 
-lda $
-lod x
-lda $
-lod y
-call_jp $sum
+print_s \n
+lod a
 print_c 
+lda $
+lod a
+lda $
+lod n
+call_jp $printArray
+pop 
 endscope 
