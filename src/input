@@ -1,15 +1,28 @@
 
-function hola();
+function sum(a,b);
 
-function hola(size){
-    
+function printLine(elem);
 
+function sum(a,b){
 
+    return a + b;
+}
 
+function printLine(elem){
+    print(elem,"\n");
 }
 
 
 function main(){
+    let x,y;
+
+    x = 100;
+    y = 50;
+
+    printLine(1253);
+    
+
+    print("La suma es: ",sum(x,y));
 
 }
 

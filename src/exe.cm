@@ -1,14 +1,53 @@
 ujp $main
-label $hola
+label $sum
 scope 
 sto 
-new_var size
-lda size
+new_var b
+lda b
 lod $
 sto 
+sto 
+new_var a
+lda a
+lod $
+sto 
+lod a
+lod b
+ad 
+endscope 
+return_jp 
+label $printLine
+scope 
+sto 
+new_var elem
+lda elem
+lod $
+sto 
+lod elem
+print_c 
+print_s \n
 ldc 0
 endscope 
 return_jp 
 label $main
 scope 
+new_var x
+new_var y
+lda x
+ldc 100
+sto 
+lda y
+ldc 50
+sto 
+lda $
+ldc 1253
+call_jp $printLine
+pop 
+print_s La suma es: 
+lda $
+lod x
+lda $
+lod y
+call_jp $sum
+print_c 
 endscope 

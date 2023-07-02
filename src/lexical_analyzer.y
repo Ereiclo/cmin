@@ -58,8 +58,8 @@
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
-%type<nodo> FUNCT_MAIN FUNCT_DEF
-%type<nodo> LISTA_ARGS_DEF
+%type<nodo> FUNCT_MAIN FUNCT_DEF  FUNCT_DEFS
+%type<nodo> LISTA_ARGS_DEF LISTA_ARGS_CALL
 %define parse.error detailed
 
 %right "then" ELSE
@@ -69,7 +69,7 @@
 
 
 S: 
-FUNCT_DECL FUNCT_DEF FUNCT_MAIN {
+FUNCT_DECLS FUNCT_DEFS FUNCT_MAIN {
 
    char* temp = concat_strings("ujp $main\n",$2.code);
    char* result = concat_strings(temp,$3.code);
@@ -84,6 +84,23 @@ FUNCT_MAIN
 {
    //printf("El codigo generado es:\n%s",$1.code);
    fwrite($1.code,1,strlen($1.code),out);
+};
+
+
+
+FUNCT_DECLS : FUNCT_DECLS FUNCT_DECL | FUNCT_DECL;
+
+FUNCT_DEFS : FUNCT_DEFS FUNCT_DEF
+{
+   $$.code = concat_strings($1.code,$2.code);
+
+   free($1.code);
+   free($2.code);
+} | 
+
+FUNCT_DEF
+{
+   $$.code = $1.code;
 };
 
 
@@ -333,6 +350,17 @@ ID
 DECL
 {
    $$.code = $1.code;
+} |
+
+ID '(' LISTA_ARGS_CALL ')'
+{
+   char* temp = malloc(100);
+   sprintf(temp,"call_jp $%s\npop \n",$<value>1);
+   $$.code = concat_strings($3.code,temp);
+
+   free(temp);
+   free($3.code);
+
 } |
 
 PRINT '(' LISTA_ARGS_PRINT ')'
@@ -753,6 +781,17 @@ ID
 
 } |
 
+ID '(' LISTA_ARGS_CALL ')'
+{
+   char* temp = malloc(100);
+   sprintf(temp,"call_jp $%s\n",$<value>1);
+   $$.code = concat_strings($3.code,temp);
+
+   free(temp);
+   free($3.code);
+
+} |
+
 '(' exp ')' 
 {
    $$.code = $2.code;
@@ -760,15 +799,20 @@ ID
 
 '-' '(' exp ')' 
 {
-   $$.code = $3.code;
 
    $$.code = concat_strings($3.code,"ldc -1\nmp \n");
+
+   free($3.code);
 } |
 
+//cambiarlo a unary (para modularizar)
 '!' '(' exp ')' 
 {
    $$.code = concat_strings($3.code,"ne \n");
+   free($3.code);
 } |
+
+
 
 '-' NUMERO 
 {
@@ -796,6 +840,37 @@ NUMERO
    free($<value>1);
    //$$.code = strdup("");
    //$$.name = $<value>1;
+};
+
+LISTA_ARGS_CALL: 
+
+LISTA_ARGS_CALL ',' exp 
+{
+   char* temp = concat_strings("lda $\n",$3.code);
+
+
+   $$.code = concat_strings($1.code,temp);
+   $$.count = $1.count + 1;
+
+   free(temp);
+   free($3.code);
+} | 
+
+exp 
+{
+   $$.code = concat_strings("lda $\n",$1.code);
+   $$.count = 1;
+
+   free($1.code);
+
+} | 
+
+%empty
+
+{
+   $$.code = strdup("");
+   $$.count = 0;
+
 };
 
 NUM_LIKE: 
