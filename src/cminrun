@@ -81,9 +81,6 @@ def print_c(value,stack,call_stack,memory,variable_table):
     # else:
         # print(constant,end='')
 
-
-
-
 def land(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()

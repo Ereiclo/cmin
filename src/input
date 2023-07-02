@@ -1,57 +1,18 @@
-
-function createArray(n);
-function printArray(n);
-
-function createArray(n){
-    print("n es ",n);
-    let a[10];
-
-    let i;
-
-    i = 0;
-
-    while(i < n){
-        a[i] = i;    
-
-
-        i = i + 1;
-    }
-
-
-    return a;
-
-}
-
-function printArray(a,n){
-    let i;
-
-    i = 0;
-
-    while(i < n){
-        print("El elemento en la posicion ",i," tiene valor: ",a[i],"\n");
-        i = i + 1;
-    }
-
-    
-
-
-}
-
-
 function main(){
+    let a,b;
+    let c;
 
-    let a,n;
-    n = 10;
+
+    c = !hola(!(a == 3),b);
+
+    b = !a;
+    a = !0;
+
+    b = !(!(a < 3) && 34);
 
 
-    a = createArray(n);
 
-    print("\n",a);
+     
 
-    printArray(a,n);
 }
-
-
-
-
 

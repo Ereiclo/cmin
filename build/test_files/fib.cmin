@@ -1,0 +1,42 @@
+function sum(a,b);
+
+function printLine(elem);
+
+function fib(n);
+
+function sum(a,b){
+
+    return a + b;
+}
+
+function printLine(elem){
+    print(elem,"\n");
+}
+
+function fib(n){
+    if(n <= 1) return n;
+
+    return fib(n-1) + fib(n-2);
+}
+
+
+function main(){
+
+
+    let x,y;
+
+    x = 20;
+    y = 50;
+
+    // printLine(1253);
+    
+    print(fib(8));
+    printLine(fib(3));
+    print("La suma es: ",sum(x,y));
+
+}
+
+
+
+
+

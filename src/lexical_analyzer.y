@@ -58,7 +58,7 @@
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
-%type<nodo> FUNCT_MAIN FUNCT_DEF  FUNCT_DEFS
+%type<nodo> FUNCT_MAIN FUNCT_DEF FUNCT_DEFS UNARY
 %type<nodo> LISTA_ARGS_DEF LISTA_ARGS_CALL
 %define parse.error detailed
 
@@ -651,7 +651,7 @@ level3 {
 
 level3:
 
-level3 OP2 VALUE 
+level3 OP2 UNARY 
 {
 
 
@@ -671,7 +671,7 @@ level3 OP2 VALUE
    free($3.code);
 } |
 
-VALUE 
+UNARY
 {
 
 
@@ -682,6 +682,30 @@ VALUE
    //free($1.code);
    //free($1.name);
 };
+
+UNARY: 
+
+'!' VALUE 
+{
+   $$.code = concat_strings($2.code,"ne \n");
+   free($2.code);
+
+} | 
+
+'-' VALUE 
+
+{
+   $$.code = concat_strings($2.code,"ldc -1\nmp \n");
+
+   free($2.code);
+
+} | 
+
+VALUE
+{
+   $$.code = $1.code;
+};
+
 
 VALUE:
 
@@ -698,29 +722,6 @@ ID
    //printf("%s\n",$$.name);
 } | 
 
-'-' ID 
-{
-   if(!check_symbol_existence($<value>2)){
-      yyerror("Variable does not exists");
-      YYABORT;
-   }
-   $$.code = (char*) malloc(60);
-   sprintf($$.code,"lod %s\nldc -1\nmp \n",$<value>2);
-   free($<value>2);
-
-} |
-
-'!' ID 
-{
-      if(!check_symbol_existence($<value>2)){
-      yyerror("Variable does not exists");
-      YYABORT;
-   }
-   $$.code = (char*) malloc(60);
-   sprintf($$.code,"lod %s\nne \n",$<value>2);
-   free($<value>2);
-
-} |
 
 ID 
 {
@@ -757,41 +758,6 @@ ID '(' LISTA_ARGS_CALL ')'
    $$.code = $2.code;
 } | 
 
-'-' '(' exp ')' 
-{
-
-   $$.code = concat_strings($3.code,"ldc -1\nmp \n");
-
-   free($3.code);
-} |
-
-//cambiarlo a unary (para modularizar)
-'!' '(' exp ')' 
-{
-   $$.code = concat_strings($3.code,"ne \n");
-   free($3.code);
-} |
-
-
-
-'-' NUMERO 
-{
-   $$.code = (char*) malloc(60);
-   sprintf($$.code,"ldc %s\nldc -1\nmp \n",$<value>2);
-   free($<value>2);
-   //$$.code = strdup("");
-   //$$.name = $<value>1;
-} |
-
-
-'!' NUMERO 
-{
-   $$.code = (char*) malloc(60);
-   sprintf($$.code,"ldc %s\nne \n",$<value>2);
-   free($<value>2);
-   //$$.code = strdup("");
-   //$$.name = $<value>1;
-} |
 
 NUMERO
 {
