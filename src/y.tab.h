@@ -56,30 +56,20 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     RETURN = 258,                  /* RETURN  */
     FUNCTION = 259,                /* FUNCTION  */
-    PAR_ABIERTO = 260,             /* PAR_ABIERTO  */
-    PAR_CERRADO = 261,             /* PAR_CERRADO  */
-    LLAVE_ABIERTA = 262,           /* LLAVE_ABIERTA  */
-    LLAVE_CERRADA = 263,           /* LLAVE_CERRADA  */
-    SUMA = 264,                    /* SUMA  */
-    COMA = 265,                    /* COMA  */
-    IGUAL = 266,                   /* IGUAL  */
-    MULT = 267,                    /* MULT  */
-    RESTA = 268,                   /* RESTA  */
-    AND = 269,                     /* AND  */
-    OR = 270,                      /* OR  */
-    CEIL = 271,                    /* CEIL  */
-    FLOOR = 272,                   /* FLOOR  */
-    LET = 273,                     /* LET  */
-    WHILE = 274,                   /* WHILE  */
-    IF = 275,                      /* IF  */
-    ELSE = 276,                    /* ELSE  */
-    COMP = 277,                    /* COMP  */
-    FIN = 278,                     /* FIN  */
-    ID = 279,                      /* ID  */
-    CADENA = 280,                  /* CADENA  */
-    NUMERO = 281,                  /* NUMERO  */
-    DIV = 282,                     /* DIV  */
-    PRINT = 283                    /* PRINT  */
+    MAIN = 260,                    /* MAIN  */
+    AND = 261,                     /* AND  */
+    OR = 262,                      /* OR  */
+    CEIL = 263,                    /* CEIL  */
+    FLOOR = 264,                   /* FLOOR  */
+    LET = 265,                     /* LET  */
+    WHILE = 266,                   /* WHILE  */
+    IF = 267,                      /* IF  */
+    ELSE = 268,                    /* ELSE  */
+    COMP = 269,                    /* COMP  */
+    ID = 270,                      /* ID  */
+    CADENA = 271,                  /* CADENA  */
+    NUMERO = 272,                  /* NUMERO  */
+    PRINT = 273                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,44 +80,34 @@ extern int yydebug;
 #define YYUNDEF 257
 #define RETURN 258
 #define FUNCTION 259
-#define PAR_ABIERTO 260
-#define PAR_CERRADO 261
-#define LLAVE_ABIERTA 262
-#define LLAVE_CERRADA 263
-#define SUMA 264
-#define COMA 265
-#define IGUAL 266
-#define MULT 267
-#define RESTA 268
-#define AND 269
-#define OR 270
-#define CEIL 271
-#define FLOOR 272
-#define LET 273
-#define WHILE 274
-#define IF 275
-#define ELSE 276
-#define COMP 277
-#define FIN 278
-#define ID 279
-#define CADENA 280
-#define NUMERO 281
-#define DIV 282
-#define PRINT 283
+#define MAIN 260
+#define AND 261
+#define OR 262
+#define CEIL 263
+#define FLOOR 264
+#define LET 265
+#define WHILE 266
+#define IF 267
+#define ELSE 268
+#define COMP 269
+#define ID 270
+#define CADENA 271
+#define NUMERO 272
+#define PRINT 273
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 51 "lexical_analyzer.y"
+#line 49 "lexical_analyzer.y"
 
-    int num;
+    int count;
     ls lista;
     node nodo;
     char* value;
 
 
-#line 131 "y.tab.h"
+#line 111 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

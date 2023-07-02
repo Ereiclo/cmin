@@ -1,4 +1,4 @@
 flex token_parser.l
 yacc lexical_analyzer.y -d -Wno-yacc
-gcc cmin_compiler.c -o exe  -lm
-./exe input
+gcc test_analyzer.c -o exe  -lm -g
+./exe 

@@ -1,75 +1,14 @@
-new_var b
-lda b
-new_arr 20
+ujp $main
+label $hola
+scope 
 sto 
 new_var size
-new_var iter
 lda size
-ldc 20
+lod $
 sto 
-lda iter
 ldc 0
-sto 
-lab L0
-lod iter
-lod size
-le 
-ne 
-tjp L1
-lod b
-lod iter
-ad 
-lod iter
-ldc 3.2
-ad 
-sto 
-lod b
-lod iter
-ad 
-loa 
-print_c 
-print_s ,
-lda iter
-lod iter
-ldc 1
-ad 
-sto 
-ujp L0
-lab L1
-lda iter
-ldc 0
-sto 
-lab L4
-lod iter
-lod size
-le 
-ne 
-tjp L5
-lod b
-lod iter
-ad 
-loa 
-ldc 7
-leq 
-ne 
-tjp L2
-lod b
-lod iter
-ad 
-ldc 0
-sto 
-ujp L3
-lab L2
-lod b
-lod iter
-ad 
-ldc 100
-sto 
-lab L3
-lda iter
-lod iter
-ldc 1
-ad 
-sto 
-ujp L4
-lab L5
+endscope 
+return_jp 
+label $main
+scope 
+endscope 

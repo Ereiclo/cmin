@@ -64,6 +64,7 @@ ceil_keyword ceil
 floor_keyword floor
 let_keyword let
 return_keyword return
+main_keyword "main"
 while_keyword while
 if_keyword if
 else_keyword else 
@@ -89,6 +90,10 @@ print_keyword print
 
 
 %%
+
+{main_keyword} {
+    return MAIN;
+}
 
 
 {print_keyword} {

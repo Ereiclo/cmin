@@ -37,19 +37,17 @@
 
    typedef struct{
       char* code; 
-      char* value;
-      char* name;
+      int count;
    } node;
 %}
 
 
-%token RETURN FUNCTION PAR_ABIERTO PAR_CERRADO
-%token LLAVE_ABIERTA LLAVE_CERRADA SUMA COMA IGUAL
-%token MULT RESTA AND OR CEIL FLOOR LET WHILE IF ELSE COMP FIN
-%token ID CADENA NUMERO DIV PRINT
+%token RETURN FUNCTION MAIN
+%token AND OR CEIL FLOOR LET WHILE IF ELSE COMP 
+%token ID CADENA NUMERO PRINT
 
 %union {
-    int num;
+    int count;
     ls lista;
     node nodo;
     char* value;
@@ -60,19 +58,191 @@
 %type<value> OP1 OP2 LOGIC 
 %type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
+%type<nodo> FUNCT_MAIN FUNCT_DEF
+%type<nodo> LISTA_ARGS_DEF
 %define parse.error detailed
 
 %right "then" ELSE
 
 
 %%
-S: 
 
-CODE
+
+S: 
+FUNCT_DECL FUNCT_DEF FUNCT_MAIN {
+
+   char* temp = concat_strings("ujp $main\n",$2.code);
+   char* result = concat_strings(temp,$3.code);
+
+   fwrite(result,1,strlen(result),out);
+   free(temp);
+   free($2.code);
+   free($3.code);
+} | 
+
+FUNCT_MAIN 
 {
    //printf("El codigo generado es:\n%s",$1.code);
    fwrite($1.code,1,strlen($1.code),out);
 };
+
+
+FUNCT_DECL: 
+
+FUNCTION ID '(' LISTA_ARGS_DEF ')' ';' 
+{
+
+};
+
+FUNCT_DEF: 
+
+FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}' 
+{
+   //hacer validaciones
+   char* temp1 = malloc(100);
+
+   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+
+   char*temp2 = concat_strings(temp1,$4.code);
+
+   char* temp3 = concat_strings(temp2,$7.code);
+
+   $$.code = concat_strings(temp3,"ldc 0\nendscope \nreturn_jp \n");
+
+
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free($<value>2);
+   free($4.code);
+   free($7.code);
+
+
+
+} | 
+
+FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE RETURN exp ';' '}' 
+{
+   char* temp1 = malloc(100);
+
+   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+
+   char*temp2 = concat_strings(temp1,$4.code);
+
+   char* temp3 = concat_strings(temp2,$7.code);
+
+   char* temp4 = concat_strings(temp3,$9.code);
+
+   $$.code = concat_strings(temp4,"endscope \nreturn_jp \n");
+
+
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free(temp4);
+   free($<value>2);
+   free($4.code);
+   free($7.code);
+   free($9.code);
+
+} |
+
+FUNCTION ID '(' LISTA_ARGS_DEF ')' '{'  RETURN exp ';' '}' 
+{
+   char* temp1 = malloc(100);
+
+   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+
+   char*temp2 = concat_strings(temp1,$4.code);
+
+   char* temp3 = concat_strings(temp2,$8.code);
+
+   $$.code = concat_strings(temp3,"endscope \nreturn_jp \n");
+
+
+   free(temp1);
+   free(temp2);
+   free(temp3);
+   free($<value>2);
+   free($4.code);
+   free($8.code);
+
+} | 
+
+FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' '}'
+{
+   char* temp1 = malloc(100);
+
+   sprintf(temp1,"label $%s\nscope \n",$<value>2);
+
+   char*temp2 = concat_strings(temp1,$4.code);
+
+
+   $$.code = concat_strings(temp2,"ldc 0\nendscope \nreturn_jp \n");
+
+
+   free(temp1);
+   free(temp2);
+   free($<value>2);
+   free($4.code);
+
+};
+
+FUNCT_MAIN: 
+
+FUNCTION MAIN '(' ')' '{' CODE '}'
+{
+   char* temp = concat_strings("label $main\nscope \n",$6.code);
+
+   $$.code = concat_strings(temp,"endscope \n");
+
+
+   free($6.code);
+   free(temp);
+
+
+} | 
+
+FUNCTION MAIN '(' ')' '{' '}'
+{
+   $$.code = strdup("label $main\nscope \nendscope \n");
+
+};
+
+
+LISTA_ARGS_DEF: 
+
+LISTA_ARGS_DEF ',' ID 
+{
+   $$.count = $1.count + 1;
+
+   char* temp = malloc(200);
+
+   sprintf(temp,"sto \nnew_var %s\nlda %s\nlod $\nsto \n",$<value>3,$<value>3);
+
+   $$.code = concat_strings(temp,$1.code);
+
+   free($1.code);
+   free($<value>3);
+} |  
+
+ID 
+{
+   $$.count = 1;
+
+   $$.code = malloc(200);
+
+   sprintf($$.code,"sto \nnew_var %s\nlda %s\nlod $\nsto \n",$<value>1,$<value>1);
+
+   free($<value>1);
+} | 
+
+%empty
+{
+   $$.count = 0;
+   $$.code = strdup("");
+};
+
 
 CODE:
 
@@ -530,8 +700,8 @@ VALUE:
 ID 
 {
    if(!check_symbol_existence($<value>1)){
-      yyerror("Variable does not exists");
-      YYABORT;
+      // yyerror("Variable does not exists");
+      // YYABORT;
    }
    $$.code = (char*) malloc(60);
    sprintf($$.code,"lod %s\n",$<value>1);
@@ -587,6 +757,18 @@ ID
 {
    $$.code = $2.code;
 } | 
+
+'-' '(' exp ')' 
+{
+   $$.code = $3.code;
+
+   $$.code = concat_strings($3.code,"ldc -1\nmp \n");
+} |
+
+'!' '(' exp ')' 
+{
+   $$.code = concat_strings($3.code,"ne \n");
+} |
 
 '-' NUMERO 
 {
