@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+import math
 
 
 def get_labels(instrs):
@@ -30,12 +31,12 @@ def get_instrs():
 
     return instrs
 
-def new_var(value,stack,memory,variable_table):
+def new_var(value,stack,call_stack,memory,variable_table):
 
     variable_table[-1][value] = len(memory)
     memory.append(0)
 
-def new_arr(value,stack,memory,variable_table):
+def new_arr(value,stack,call_stack,memory,variable_table):
 
 
     stack.append(len(memory))
@@ -43,84 +44,83 @@ def new_arr(value,stack,memory,variable_table):
     for _ in range(int(value)):
         memory.append(0)
 
-def lda(value,stack,memory,variable_table):
+def lda(value,stack,call_stack,memory,variable_table):
     stack.append(variable_table[-1][value])
 
-def ldc(value,stack,memory,variable_table):
+def ldc(value,stack,call_stack,memory,variable_table):
     stack.append(float(value))
 
 
-def sto(value,stack,memory,variable_table):
+def sto(value,stack,call_stack,memory,variable_table):
     constant = stack.pop()
     address = int(stack.pop())
 
     memory[address] = constant
 
-def lod(value,stack,memory,variable_table):
+def lod(value,stack,call_stack,memory,variable_table):
     stack.append(memory[variable_table[-1][value]])
 
 
-def loa(value,stack,memory,variable_table):
+def loa(value,stack,call_stack,memory,variable_table):
     address = int(stack.pop())
 
     stack.append(memory[address])
 
-def tjp(value,stack,memory,variable_table):
+def tjp(value,stack,call_stack,memory,variable_table):
     return stack.pop()
 
-def print_s(value,stack,memory,variable_table):
+def print_s(value,stack,call_stack,memory,variable_table):
     transformed_string = value.replace('\\n','\n')
     print(transformed_string,end='')
 
-def print_c(value,stack,memory,variable_table):
+def print_c(value,stack,call_stack,memory,variable_table):
+    # print(stack)
     constant = stack.pop()
-    if(constant.is_integer()):
-        print(int(constant),end='')
-    else:
-        print(constant,end='')
+    print(constant,end='')
+    # if(constant.is_integer()):
+        # print(int(constant),end='')
+    # else:
+        # print(constant,end='')
 
-
-
-
-def land(value,stack,memory,variable_table):
+def land(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first and second)
 
-def lor(value,stack,memory,variable_table):
+def lor(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first or second)
 
-def le(value,stack,memory,variable_table):
+def le(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first < second)
 
-def ge(value,stack,memory,variable_table):
+def ge(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first > second)
 
 
-def geq(value,stack,memory,variable_table):
+def geq(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first >= second)
 
-def leq(value,stack,memory,variable_table):
+def leq(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first <= second)
 
 
-def equi(value,stack,memory,variable_table):
+def equi(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
@@ -128,50 +128,79 @@ def equi(value,stack,memory,variable_table):
 
 
 
-def ad(value,stack,memory,variable_table):
+def ad(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first + second)
 
 
-def sb(value,stack,memory,variable_table):
+def sb(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first - second)
 
-def mp(value,stack,memory,variable_table):
+def mp(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first * second)
 
 
-def dv(value,stack,memory,variable_table):
+def dv(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
-    stack.append(first * second)
+    stack.append(first / second)
 
-def mod(value,stack,memory,variable_table):
+def mod(value,stack,call_stack,memory,variable_table):
     second = stack.pop()
     first = stack.pop()
 
     stack.append(first % second)
 
+def floor(value,stack,call_stack,memory,variable_table):
+    first = stack.pop()
 
-def ne(value,stack,memory,variable_table):
+    stack.append(math.floor(first))
+
+def ceil(value,stack,call_stack,memory,variable_table):
+    first = stack.pop()
+
+    stack.append(math.ceil(first))
+
+
+def ne(value,stack,call_stack,memory,variable_table):
     first = stack.pop()
 
     stack.append(not first)
 
+def scope(value,stack,call_stack,memory,variable_table):
+    #memory leak
+    variable_table.append({'$':0})
+
+def endscope(value,stack,call_stack,memory,variable_table):
+
+    # del variable_table[-1]['$']
+    # min_index = min(variable_table[-1].values())
+    # del memory[min_index:]
+    variable_table.pop()
+
+def pop(value,stack,call_stack,memory,variable_table):
+    stack.pop()
+
+    
 
 
 
 
-
-operations = {'new_var':new_var,
+operations = {
+   
+              'scope':scope,
+              'endscope':endscope,
+              'pop':pop,
+              'new_var':new_var,
               'new_arr':new_arr,
               'lda':lda,
               'ldc':ldc,
@@ -193,16 +222,19 @@ operations = {'new_var':new_var,
               'mp':mp,
               'dv':dv,
               'mod':mod,
-              'ne':ne}
+              'ne':ne,
+              'floor':floor,
+              'ceil':ceil}
 
 instrs = get_instrs()
 labels_dicc = get_labels(instrs)
 stack = []
-memory = []
-variable_table = [{}] #un diccionario para cada scope (función)
+call_stack = []
+memory = [0]
+variable_table = [{'$':0}] #un diccionario para cada scope (función)
 
 
-# print(labels_dicc)
+print(labels_dicc)
 
 
 print("Output: ")
@@ -218,12 +250,20 @@ while actual_instr != len(instrs):
     #     print(stack)
 
 
+
     if instr == "lab":
         # print("found lab",value,"skipping...")
         actual_instr += 1
         continue
+    elif instr == "return_jp":
+        actual_instr = call_stack.pop()
+        continue
+    elif instr == "call_jp":
+        call_stack.append(actual_instr+1)
+        actual_instr = labels_dicc[value]
+        continue
     elif instr == "tjp":
-        jump = operations["tjp"](value,stack,memory,variable_table)
+        jump = operations["tjp"](value,stack,call_stack,memory,variable_table)
         if jump:
             # print("jump to",value)
             actual_instr = labels_dicc[value]
@@ -241,7 +281,7 @@ while actual_instr != len(instrs):
     # print('memory:',memory)
     # print('variable table:',variable_table[-1])
     
-    operations[instr](value,stack,memory,variable_table)
+    operations[instr](value,stack,call_stack,memory,variable_table)
 
     actual_instr += 1
 

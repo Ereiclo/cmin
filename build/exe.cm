@@ -1,75 +1,451 @@
-new_var b
-lda b
-new_arr 20
+ujp $main
+lab $printArray
+scope 
 sto 
-new_var size
-new_var iter
-lda size
-ldc 20
+new_var n
+lda n
+lod $
 sto 
-lda iter
+sto 
+new_var array
+lda array
+lod $
+sto 
+new_var i
+lda i
 ldc 0
 sto 
 lab L0
-lod iter
-lod size
+lod i
+lod n
 le 
 ne 
 tjp L1
-lod b
-lod iter
-ad 
-lod iter
-ldc 3.2
-ad 
-sto 
-lod b
-lod iter
+lod array
+lod i
 ad 
 loa 
 print_c 
-print_s ,
-lda iter
-lod iter
+print_s  
+lda i
+lod i
 ldc 1
 ad 
 sto 
 ujp L0
 lab L1
-lda iter
+ldc 0
+endscope 
+return_jp 
+lab $merge
+scope 
+sto 
+new_var r
+lda r
+lod $
+sto 
+sto 
+new_var l
+lda l
+lod $
+sto 
+sto 
+new_var B
+lda B
+lod $
+sto 
+sto 
+new_var A
+lda A
+lod $
+sto 
+sto 
+new_var array
+lda array
+lod $
+sto 
+new_var k
+new_var i
+new_var j
+lda k
+lod l
+sto 
+lda i
+ldc 0
+sto 
+lda j
 ldc 0
 sto 
 lab L4
-lod iter
-lod size
+lod k
+lod r
 le 
 ne 
 tjp L5
-lod b
-lod iter
+lod A
+lod i
 ad 
 loa 
-ldc 7
+lod B
+lod j
+ad 
+loa 
 leq 
 ne 
 tjp L2
-lod b
-lod iter
+lod array
+lod k
 ad 
-ldc 0
+lod A
+lod i
+ad 
+loa 
+sto 
+lda i
+lod i
+ldc 1
+ad 
 sto 
 ujp L3
 lab L2
-lod b
-lod iter
+lod array
+lod k
 ad 
-ldc 100
+lod B
+lod j
+ad 
+loa 
+sto 
+lda j
+lod j
+ldc 1
+ad 
 sto 
 lab L3
-lda iter
-lod iter
+lda k
+lod k
 ldc 1
 ad 
 sto 
 ujp L4
 lab L5
+ldc 0
+endscope 
+return_jp 
+lab $copyArray
+scope 
+sto 
+new_var r
+lda r
+lod $
+sto 
+sto 
+new_var l
+lda l
+lod $
+sto 
+sto 
+new_var copy
+lda copy
+lod $
+sto 
+sto 
+new_var array
+lda array
+lod $
+sto 
+new_var i
+new_var k
+lda i
+lod l
+sto 
+lda k
+ldc 0
+sto 
+lab L6
+lod i
+lod r
+le 
+ne 
+tjp L7
+lod copy
+lod k
+ad 
+lod array
+lod i
+ad 
+loa 
+sto 
+lda k
+lod k
+ldc 1
+ad 
+sto 
+lda i
+lod i
+ldc 1
+ad 
+sto 
+ujp L6
+lab L7
+ldc 0
+endscope 
+return_jp 
+lab $mergeSort
+scope 
+sto 
+new_var r
+lda r
+lod $
+sto 
+sto 
+new_var l
+lda l
+lod $
+sto 
+sto 
+new_var B
+lda B
+lod $
+sto 
+sto 
+new_var A
+lda A
+lod $
+sto 
+sto 
+new_var array
+lda array
+lod $
+sto 
+lod l
+lod r
+ldc 1
+sb 
+equi 
+ne 
+tjp L8
+ldc 0
+endscope 
+return_jp 
+lab L8
+new_var mid
+new_var sizeA
+lda mid
+lod r
+lod l
+ad 
+ldc 1
+sb 
+ldc 2
+dv 
+floor 
+sto 
+lda $
+lod array
+lda $
+lod A
+lda $
+lod B
+lda $
+lod l
+lda $
+lod mid
+ldc 1
+ad 
+call_jp $mergeSort
+pop 
+lda $
+lod array
+lda $
+lod A
+lda $
+lod B
+lda $
+lod mid
+ldc 1
+ad 
+lda $
+lod r
+call_jp $mergeSort
+pop 
+lda $
+lod array
+lda $
+lod A
+lda $
+lod l
+lda $
+lod mid
+ldc 1
+ad 
+call_jp $copyArray
+pop 
+lda $
+lod array
+lda $
+lod B
+lda $
+lod mid
+ldc 1
+ad 
+lda $
+lod r
+call_jp $copyArray
+pop 
+lda sizeA
+lod mid
+lod l
+sb 
+ldc 1
+ad 
+sto 
+lod A
+lod sizeA
+ad 
+ldc inf
+sto 
+lod B
+lod sizeA
+ad 
+ldc inf
+sto 
+lda $
+lod array
+lda $
+lod A
+lda $
+lod B
+lda $
+lod l
+lda $
+lod r
+call_jp $merge
+pop 
+ldc 0
+endscope 
+return_jp 
+lab $main
+scope 
+new_var n
+lda n
+ldc 16
+sto 
+new_var array
+new_var A
+lda A
+new_arr 17
+sto 
+new_var B
+lda B
+new_arr 17
+sto 
+lda array
+new_arr 16
+sto 
+lod array
+ldc 0
+ad 
+ldc 63.000000
+sto 
+lod array
+ldc 1
+ad 
+ldc 58.000000
+sto 
+lod array
+ldc 2
+ad 
+ldc 11.000000
+sto 
+lod array
+ldc 3
+ad 
+ldc 69.000000
+sto 
+lod array
+ldc 4
+ad 
+ldc 42.000000
+sto 
+lod array
+ldc 5
+ad 
+ldc 3.000000
+sto 
+lod array
+ldc 6
+ad 
+ldc 78.000000
+sto 
+lod array
+ldc 7
+ad 
+ldc 60.000000
+sto 
+lod array
+ldc 8
+ad 
+ldc 59.000000
+sto 
+lod array
+ldc 9
+ad 
+ldc 81.000000
+sto 
+lod array
+ldc 10
+ad 
+ldc 7.000000
+sto 
+lod array
+ldc 11
+ad 
+ldc 82.000000
+sto 
+lod array
+ldc 12
+ad 
+ldc 65.000000
+sto 
+lod array
+ldc 13
+ad 
+ldc 25.000000
+sto 
+lod array
+ldc 14
+ad 
+ldc 33.000000
+sto 
+lod array
+ldc 15
+ad 
+ldc 32.000000
+sto 
+lda $
+lod array
+lda $
+lod n
+call_jp $printArray
+pop 
+lda $
+lod array
+lda $
+lod A
+lda $
+lod B
+lda $
+ldc 0
+lda $
+lod n
+call_jp $mergeSort
+pop 
+print_s \n
+lda $
+lod array
+lda $
+lod n
+call_jp $printArray
+pop 
+endscope 
