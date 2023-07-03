@@ -5,16 +5,39 @@
    #include <string.h>
    int yylex(void);
    void yyerror(const char *s);
-   int push_symbol(char*symbol);
    //FILE *yyin;
    FILE *out;
-   char** symbol_table;
-   int n_symbols = 0;
-   char** function_table[2];
+   struct function{
+      char* name;
+      int n_args;
+      int defined;
+   };
+
+   struct variable{
+      char* name;
+      char* scope;
+
+   };
+
+
+   struct function* table_function;
+   struct variable* table_variable;
+   int n_variables = 0;
    int n_functions = 0;
    int actual_label = 0;
+   char* actual_scope;
+   int id_actual_scope = 0;
 
-   int check_symbol_existence(char* symbol);
+   int check_variable_existence(char* symbol,char*scope);
+   void push_variable(char*symbol,char*scope);
+   void declare_function(char*name,int n_args);
+   void define_function(char*name);
+   int check_function_existence(char* name);
+   int is_defined(char* name, int args);
+   int is_valid_call(char*name, int args);
+   int is_valid_definition(char*name, int args);
+   char* check_undefined_function();
+
    char* concat_strings(char* dest, char* src){
 
       char* new_string = (char*) malloc(strlen(dest) + strlen(src) + 1);
@@ -110,6 +133,17 @@ FUNCT_DECL:
 
 FUNCTION ID '(' LISTA_ARGS_DEF ')' ';' 
 {
+   if(check_function_existence($<value>2)){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already declared",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   }
+
+   declare_function(strdup($<value>2),$4.count);
+
+   free($<value>2);
+   free($4.code);
 
 };
 
@@ -117,6 +151,30 @@ FUNCT_DEF:
 
 FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}' 
 {
+   free(actual_scope);
+   actual_scope = strdup("");
+
+   if(is_valid_definition($<value>2,$4.count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s not declared",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_definition($<value>2,$4.count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already defined",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   } else if(is_valid_definition($<value>2,$4.count) == -2){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Definition of function %s does not match number of args of declaration",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   }
+
+   define_function($<value>2);
+
+
    //hacer validaciones
    char* temp1 = malloc(100);
 
@@ -142,6 +200,28 @@ FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}'
 
 FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' '}'
 {
+
+   if(is_valid_definition($<value>2,$4.count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s not declared",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_definition($<value>2,$4.count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already defined",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   } else if(is_valid_definition($<value>2,$4.count) == -2){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Definition of function %s does not match number of args of declaration",$<value>2);
+      yyerror(error_string);
+      YYABORT;
+   }
+
+
+   define_function($<value>2);
+
    char* temp1 = malloc(100);
 
    sprintf(temp1,"lab $%s\nscope \n",$<value>2);
@@ -161,14 +241,29 @@ FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' '}'
 
 FUNCT_MAIN: 
 
-FUNCTION MAIN '(' ')' '{' CODE '}'
+FUNCTION MAIN  '(' ')' '{'
+
+{ 
+   free(actual_scope);
+   actual_scope = strdup("main");
+}
+ 
+CODE '}'
 {
-   char* temp = concat_strings("lab $main\nscope \n",$6.code);
+   char* error_string = check_undefined_function();
+
+   if(strcmp(error_string,"") != 0){
+
+      yyerror(error_string);
+      YYABORT;
+   }
+
+   char* temp = concat_strings("lab $main\nscope \n",$7.code);
 
    $$.code = concat_strings(temp,"endscope \n");
 
 
-   free($6.code);
+   free($7.code);
    free(temp);
 
 
@@ -176,6 +271,15 @@ FUNCTION MAIN '(' ')' '{' CODE '}'
 
 FUNCTION MAIN '(' ')' '{' '}'
 {
+   char* error_string = check_undefined_function();
+
+   if(strcmp(error_string,"") != 0){
+
+      yyerror(error_string);
+      YYABORT;
+   }
+
+
    $$.code = strdup("lab $main\nscope \nendscope \n");
 
 };
@@ -185,6 +289,16 @@ LISTA_ARGS_DEF:
 
 LISTA_ARGS_DEF ',' ID 
 {
+   if(check_variable_existence($<value>3,actual_scope) == 1){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",$<value>3);
+      yyerror(error_string);
+      YYERROR;
+   }
+   // printf("ke:%s\n",$<value>3);
+
+   push_variable(strdup($<value>3),actual_scope);
+
    $$.count = $1.count + 1;
 
    char* temp = malloc(200);
@@ -199,6 +313,12 @@ LISTA_ARGS_DEF ',' ID
 
 ID 
 {
+   free(actual_scope);
+   actual_scope = malloc(100);
+   sprintf(actual_scope,"scope%d",id_actual_scope++);
+   push_variable(strdup($<value>1),actual_scope);
+
+
    $$.count = 1;
 
    $$.code = malloc(200);
@@ -210,6 +330,9 @@ ID
 
 %empty
 {
+   free(actual_scope);
+   actual_scope = malloc(100);
+   sprintf(actual_scope,"scope%d",id_actual_scope++);
    $$.count = 0;
    $$.code = strdup("");
 };
@@ -248,34 +371,33 @@ IN:
  
 ID_ASSIGN {$$.code = $1.code;} |
 
-ID 
+ID '[' NUM_LIKE 
 {
-   if(!check_symbol_existence($<value>1)) {
-      yyerror("Variable does not exists");
-      YYERROR;
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
    }
-}
-'[' NUM_LIKE 
-{
 
    $<nodo>$.code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad \n";
-   sprintf($<nodo>$.code,template_string,$<value>1,$4.code);
+   sprintf($<nodo>$.code,template_string,$<value>1,$3.code);
 
    free($<value>1);
-   free($4.code);
+   free($3.code);
 
 
 } 
 ']' '=' exp 
 {
-   char* temp = concat_strings($<nodo>5.code,$8.code);
+   char* temp = concat_strings($<nodo>4.code,$7.code);
 
    $$.code = concat_strings(temp,"sto \n");
 
    free(temp);
-   free($<nodo>5.code);
-   free($8.code);
+   free($<nodo>4.code);
+   free($7.code);
 } |
 
 DECL
@@ -285,6 +407,19 @@ DECL
 
 ID '(' LISTA_ARGS_CALL ')'
 {
+   if(is_valid_call($<value>1,$3.count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_call($<value>1,$3.count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Call to function %s does not match number of args",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+
+   }
    char* temp = malloc(100);
    sprintf(temp,"call_jp $%s\npop \n",$<value>1);
    $$.code = concat_strings($3.code,temp);
@@ -302,6 +437,11 @@ PRINT '(' LISTA_ARGS_PRINT ')'
 
 RETURN exp {
    //no hacerlo en main
+   // printf("%sa",actual_scope);
+   if(strcmp(actual_scope,"main") == 0){
+      yyerror("Main cannnot return");
+      YYABORT;
+   }
    $$.code = concat_strings($2.code,"endscope \nreturn_jp \n");
 
    free($2.code);
@@ -316,6 +456,13 @@ ID_ASSIGN:
 
 ID '=' LISTA_ARRAY 
 {
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+   }
+
    char* actual_code = strdup("");
    int size = $3[0];
 
@@ -347,6 +494,13 @@ ID '=' LISTA_ARRAY
 
 ID '=' exp 
 {
+
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+   }
    char* temp1 = (char*) malloc(100);
    sprintf(temp1,"lda %s\n",$<value>1);
    char* temp2 = concat_strings(temp1,$3.code);
@@ -534,8 +688,10 @@ DECL:
 
 DECL ',' ID 
 {
-   if(check_symbol_existence($<value>3)){
-      yyerror("Variable already exists");
+   if(check_variable_existence($<value>3,actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",$<value>3);
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -544,7 +700,7 @@ DECL ',' ID
 
    sprintf(temp,"new_var %s\n",$<value>3);
    $$.code = concat_strings($1.code,temp);
-   push_symbol($<value>3);
+   push_variable($<value>3,actual_scope);
 
    free($<value>3);
    free($1.code);
@@ -554,8 +710,10 @@ DECL ',' ID
 
 DECL ',' ID '[' NUMERO ']' 
 {
-   if(check_symbol_existence($<value>3)){
-      yyerror("Variable already exists");
+   if(check_variable_existence($<value>3,actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",$<value>3);
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -574,7 +732,7 @@ DECL ',' ID '[' NUMERO ']'
    sprintf(temp,template_string,$<value>3,$<value>3,num_i);
 
    $$.code = concat_strings($1.code,temp);
-   push_symbol($<value>3);
+   push_variable($<value>3,actual_scope);
 
    free(temp);
    free($<value>3);
@@ -583,15 +741,17 @@ DECL ',' ID '[' NUMERO ']'
 
 LET ID 
 {
-   if(check_symbol_existence($<value>2)){
-      // yyerror("Variable already exists");
-      // YYABORT; 
+   if(check_variable_existence($<value>2,actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",$<value>2);
+      yyerror(error_string);
+      YYABORT; 
    }
 
    
    $$.code = (char*) malloc(100);
    sprintf($$.code,"new_var %s\n",$<value>2);
-   push_symbol($<value>2);
+   push_variable($<value>2,actual_scope);
 
    free($<value>2);
    
@@ -599,8 +759,10 @@ LET ID
 
 LET ID '[' NUMERO ']' 
 {
-   if(check_symbol_existence($<value>2)){
-      yyerror("Variable already exists");
+   if(check_variable_existence($<value>2,actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",$<value>2);
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -619,7 +781,7 @@ LET ID '[' NUMERO ']'
    $$.code = (char*) malloc(200);
    char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto \n";
    sprintf($$.code,template_string,$<value>2,$<value>2,num_i);
-   push_symbol($<value>2);
+   push_variable($<value>2,actual_scope);
 
    free($<value>2);
    free($<value>4);
@@ -762,9 +924,11 @@ VALUE:
 
 ID 
 {
-   if(!check_symbol_existence($<value>1)){
-      // yyerror("Variable does not exists");
-      // YYABORT;
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
    }
    $$.code = (char*) malloc(60);
    sprintf($$.code,"lod %s\n",$<value>1);
@@ -775,26 +939,39 @@ ID
 
 
 ID 
-{
-   if(!check_symbol_existence($<value>1)) {
-      yyerror("Variable does not exists");
-      YYERROR;
-   }
-} 
 '[' NUM_LIKE ']'
 {
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+   }
    
    $$.code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad \nloa \n";
-   sprintf($$.code,template_string,$<value>1,$4.code);
+   sprintf($$.code,template_string,$<value>1,$3.code);
 
    free($<value>1);
-   free($4.code);
+   free($3.code);
 
 } |
 
 ID '(' LISTA_ARGS_CALL ')'
 {
+   if(is_valid_call($<value>1,$3.count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_call($<value>1,$3.count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Call to function %s does not match number of args",$<value>1);
+      yyerror(error_string);
+      YYABORT;
+
+   }
    char* temp = malloc(100);
    sprintf(temp,"call_jp $%s\n",$<value>1);
    $$.code = concat_strings($3.code,temp);
@@ -866,10 +1043,14 @@ NUM_LIKE:
 
 ID 
 {
-   if(!check_symbol_existence($<value>1)) {
-      yyerror("Variable does not exists");
-      YYERROR;
+
+   if(!check_variable_existence($<value>1,actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",$<value>1);
+      yyerror(error_string);
+      YYABORT;
    }
+   
    $$.code = (char*) malloc(60);
    sprintf($$.code,"lod %s\n",$<value>1);
    free($<value>1);

@@ -75,16 +75,39 @@
    #include <string.h>
    int yylex(void);
    void yyerror(const char *s);
-   int push_symbol(char*symbol);
    //FILE *yyin;
    FILE *out;
-   char** symbol_table;
-   int n_symbols = 0;
-   char** function_table[2];
+   struct function{
+      char* name;
+      int n_args;
+      int defined;
+   };
+
+   struct variable{
+      char* name;
+      char* scope;
+
+   };
+
+
+   struct function* table_function;
+   struct variable* table_variable;
+   int n_variables = 0;
    int n_functions = 0;
    int actual_label = 0;
+   char* actual_scope;
+   int id_actual_scope = 0;
 
-   int check_symbol_existence(char* symbol);
+   int check_variable_existence(char* symbol,char*scope);
+   void push_variable(char*symbol,char*scope);
+   void declare_function(char*name,int n_args);
+   void define_function(char*name);
+   int check_function_existence(char* name);
+   int is_defined(char* name, int args);
+   int is_valid_call(char*name, int args);
+   int is_valid_definition(char*name, int args);
+   char* check_undefined_function();
+
    char* concat_strings(char* dest, char* src){
 
       char* new_string = (char*) malloc(strlen(dest) + strlen(src) + 1);
@@ -96,7 +119,7 @@
 
 
 
-#line 31 "lexical_analyzer.y"
+#line 54 "lexical_analyzer.y"
 
 
    typedef struct{
@@ -109,7 +132,7 @@
       int count;
    } node;
 
-#line 113 "y.tab.c"
+#line 136 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -198,7 +221,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 49 "lexical_analyzer.y"
+#line 72 "lexical_analyzer.y"
 
     int count;
     ls lista;
@@ -207,7 +230,7 @@ union YYSTYPE
     double* lista_num;
 
 
-#line 211 "y.tab.c"
+#line 234 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -269,11 +292,11 @@ enum yysymbol_kind_t
   YYSYMBOL_FUNCT_DECL = 39,                /* FUNCT_DECL  */
   YYSYMBOL_FUNCT_DEF = 40,                 /* FUNCT_DEF  */
   YYSYMBOL_FUNCT_MAIN = 41,                /* FUNCT_MAIN  */
-  YYSYMBOL_LISTA_ARGS_DEF = 42,            /* LISTA_ARGS_DEF  */
-  YYSYMBOL_CODE = 43,                      /* CODE  */
-  YYSYMBOL_I = 44,                         /* I  */
-  YYSYMBOL_IN = 45,                        /* IN  */
-  YYSYMBOL_46_1 = 46,                      /* $@1  */
+  YYSYMBOL_42_1 = 42,                      /* $@1  */
+  YYSYMBOL_LISTA_ARGS_DEF = 43,            /* LISTA_ARGS_DEF  */
+  YYSYMBOL_CODE = 44,                      /* CODE  */
+  YYSYMBOL_I = 45,                         /* I  */
+  YYSYMBOL_IN = 46,                        /* IN  */
   YYSYMBOL_47_2 = 47,                      /* @2  */
   YYSYMBOL_ID_ASSIGN = 48,                 /* ID_ASSIGN  */
   YYSYMBOL_LISTA_ARRAY = 49,               /* LISTA_ARRAY  */
@@ -291,12 +314,11 @@ enum yysymbol_kind_t
   YYSYMBOL_level3 = 61,                    /* level3  */
   YYSYMBOL_UNARY = 62,                     /* UNARY  */
   YYSYMBOL_VALUE = 63,                     /* VALUE  */
-  YYSYMBOL_64_3 = 64,                      /* $@3  */
-  YYSYMBOL_LISTA_ARGS_CALL = 65,           /* LISTA_ARGS_CALL  */
-  YYSYMBOL_NUM_LIKE = 66,                  /* NUM_LIKE  */
-  YYSYMBOL_LOGIC = 67,                     /* LOGIC  */
-  YYSYMBOL_OP1 = 68,                       /* OP1  */
-  YYSYMBOL_OP2 = 69                        /* OP2  */
+  YYSYMBOL_LISTA_ARGS_CALL = 64,           /* LISTA_ARGS_CALL  */
+  YYSYMBOL_NUM_LIKE = 65,                  /* NUM_LIKE  */
+  YYSYMBOL_LOGIC = 66,                     /* LOGIC  */
+  YYSYMBOL_OP1 = 67,                       /* OP1  */
+  YYSYMBOL_OP2 = 68                        /* OP2  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -629,11 +651,11 @@ union yyalloc
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  35
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  35
+#define YYNNTS  34
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  81
+#define YYNRULES  80
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  158
+#define YYNSTATES  157
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   274
@@ -684,15 +706,15 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    74,    74,    85,    93,    93,    95,   103,   111,   118,
-     143,   164,   177,   186,   200,   211,   220,   228,   235,   240,
-     249,   252,   259,   251,   281,   286,   297,   303,   311,   317,
-     348,   364,   368,   378,   388,   399,   411,   420,   431,   431,
-     431,   435,   466,   494,   531,   531,   531,   535,   555,   584,
-     600,   631,   645,   654,   675,   683,   697,   705,   725,   739,
-     746,   755,   763,   778,   777,   796,   807,   813,   819,   825,
-     836,   848,   857,   867,   878,   897,   897,   898,   898,   899,
-     899,   899
+       0,    97,    97,   108,   116,   116,   118,   126,   134,   152,
+     201,   246,   244,   272,   290,   314,   331,   343,   351,   358,
+     363,   372,   375,   374,   403,   408,   432,   438,   451,   457,
+     495,   518,   522,   532,   542,   553,   565,   574,   585,   585,
+     585,   589,   620,   648,   685,   685,   685,   689,   711,   742,
+     760,   793,   807,   816,   837,   845,   859,   867,   887,   901,
+     908,   917,   925,   941,   960,   984,   990,   996,  1002,  1013,
+    1025,  1034,  1044,  1059,  1078,  1078,  1079,  1079,  1080,  1080,
+    1080
 };
 #endif
 
@@ -714,22 +736,22 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "CADENA", "NUMERO", "PRINT", "then", "'('", "')'", "';'", "'{'", "'}'",
   "','", "'['", "']'", "'='", "'!'", "'-'", "'+'", "'*'", "'/'", "'%'",
   "$accept", "S", "FUNCT_DECLS", "FUNCT_DEFS", "FUNCT_DECL", "FUNCT_DEF",
-  "FUNCT_MAIN", "LISTA_ARGS_DEF", "CODE", "I", "IN", "$@1", "@2",
+  "FUNCT_MAIN", "$@1", "LISTA_ARGS_DEF", "CODE", "I", "IN", "@2",
   "ID_ASSIGN", "LISTA_ARRAY", "LISTA_ARGS_NUM", "LISTA_ARGS_PRINT",
   "SUB_CODE", "WHILE_BLOCK", "IF_BLOCK", "IF_ELSE_BLOCK", "P", "DECL",
-  "exp", "level1", "level2", "level3", "UNARY", "VALUE", "$@3",
-  "LISTA_ARGS_CALL", "NUM_LIKE", "LOGIC", "OP1", "OP2", YY_NULLPTR
+  "exp", "level1", "level2", "level3", "UNARY", "VALUE", "LISTA_ARGS_CALL",
+  "NUM_LIKE", "LOGIC", "OP1", "OP2", YY_NULLPTR
   };
   return yy_sname[yysymbol];
 }
 #endif
 
-#define YYPACT_NINF (-115)
+#define YYPACT_NINF (-121)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-64)
+#define YYTABLE_NINF (-1)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -738,22 +760,22 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-       2,    -2,    21,    53,  -115,  -115,    41,    56,  -115,    58,
-      86,  -115,  -115,    76,    94,    80,    12,  -115,  -115,   116,
-    -115,     1,    94,   109,    67,   134,   147,    85,    94,     3,
-     149,   150,   152,    36,   156,  -115,    83,  -115,   145,  -115,
-    -115,  -115,  -115,  -115,   153,  -115,  -115,    29,    91,   157,
-     159,   -16,  -115,     3,   151,   151,   112,   166,   106,   141,
-    -115,  -115,   155,     3,     3,     3,    -1,   158,    33,  -115,
-    -115,  -115,   167,    93,   160,     3,     3,     3,   161,    24,
-    -115,  -115,  -115,  -115,     3,     3,  -115,  -115,     3,  -115,
-    -115,  -115,     3,   168,    37,    48,   112,   128,   169,  -115,
-     112,    23,  -115,   136,   112,   162,  -115,   110,    68,    81,
-     144,    23,  -115,   166,   106,   141,  -115,   163,   140,   140,
-    -115,     3,  -115,    99,  -115,  -115,  -115,  -115,    51,   172,
-    -115,  -115,  -115,  -115,   164,  -115,   120,  -115,  -115,   179,
-     112,   176,  -115,   170,  -115,   112,   171,  -115,  -115,   130,
-     140,  -115,   173,  -115,  -115,  -115,     3,   112
+      44,     5,     7,    58,  -121,  -121,    68,    99,  -121,    96,
+     119,  -121,  -121,   109,   116,   121,    12,  -121,  -121,   122,
+    -121,     3,   116,   124,   118,   130,   138,    26,   116,  -121,
+     161,  -121,  -121,    46,    38,    57,   140,   141,   143,    47,
+     146,    81,  -121,   134,  -121,  -121,  -121,  -121,  -121,   142,
+     103,   151,   158,   162,   -14,  -121,    57,   160,   160,   101,
+     167,   -12,    69,  -121,  -121,   157,    57,    57,    57,    61,
+      -4,    25,  -121,  -121,  -121,   169,  -121,   114,    57,    57,
+      57,    61,     2,  -121,  -121,  -121,  -121,    57,    57,  -121,
+    -121,    57,  -121,  -121,  -121,    57,   168,     8,    32,   101,
+      39,  -121,  -121,  -121,   170,  -121,   101,  -121,    60,   101,
+     163,  -121,    73,    91,    79,   159,  -121,   167,   -12,    69,
+    -121,   164,   147,   147,  -121,    57,   165,  -121,    95,  -121,
+      41,   171,  -121,  -121,  -121,  -121,  -121,   125,  -121,  -121,
+     177,   101,   166,   176,  -121,  -121,   101,   172,  -121,   136,
+     147,    57,  -121,  -121,  -121,  -121,   101
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -762,92 +784,92 @@ static const yytype_int16 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     5,     3,     0,     0,     1,     0,
-       0,     4,     7,     0,    15,     0,     0,     6,     2,     0,
-      14,     0,    15,     0,    28,     0,     0,     0,    15,     0,
-       0,     0,     0,    21,     0,    12,    28,    17,     0,    20,
-      19,    40,    38,    39,    24,     8,    13,     0,     0,     0,
-       0,    62,    69,     0,     0,     0,    27,    52,    54,    56,
-      58,    61,    49,     0,     0,    72,     0,     0,     0,    11,
-      16,    18,     0,    28,     0,     0,     0,    72,     0,     0,
-      59,    60,    75,    76,     0,     0,    78,    77,     0,    79,
-      80,    81,     0,     0,     0,     0,    71,     0,     0,    29,
-      30,     0,    36,     0,    37,    47,    10,    28,     0,     0,
-       0,     0,    68,    51,    53,    55,    57,     0,    28,    28,
-      25,     0,    33,     0,    73,    74,    22,    26,     0,     0,
-       9,    66,    67,    65,     0,    50,    28,    44,    41,    42,
-      70,     0,    31,     0,    35,    34,     0,    64,    46,    28,
-      28,    32,     0,    48,    45,    43,     0,    23
+       0,     4,     7,     0,    16,     0,     0,     6,     2,     0,
+      15,     0,    16,     0,    11,     0,     0,     0,    16,    13,
+      28,     8,    14,     0,     0,     0,     0,     0,     0,     0,
+       0,    28,    18,     0,    21,    20,    40,    38,    39,    24,
+      28,     0,     0,     0,    62,    68,     0,     0,     0,    27,
+      52,    54,    56,    58,    61,    49,     0,     0,    71,     0,
+       0,     0,    12,    17,    19,     0,    10,    28,     0,     0,
+      71,     0,     0,    59,    60,    74,    75,     0,     0,    77,
+      76,     0,    78,    79,    80,     0,     0,     0,     0,    70,
+       0,    72,    73,    22,     0,    29,    30,    36,     0,    37,
+      47,     9,     0,     0,     0,     0,    67,    51,    53,    55,
+      57,     0,    28,    28,    25,     0,     0,    33,     0,    26,
+       0,     0,    65,    66,    64,    63,    50,    28,    44,    41,
+      42,    69,     0,     0,    31,    35,    34,     0,    46,    28,
+      28,     0,    32,    48,    45,    43,    23
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -115,  -115,  -115,  -115,   191,   185,   186,   -13,   -71,   -35,
-    -115,  -115,  -115,  -115,  -115,  -115,  -115,  -115,  -115,  -115,
-    -115,  -114,  -115,   -29,   115,   117,   118,   108,    92,  -115,
-     126,    96,  -115,  -115,  -115
+    -121,  -121,  -121,  -121,   192,   186,   187,  -121,    24,   -48,
+     -40,  -121,  -121,  -121,  -121,  -121,  -121,  -121,  -121,  -121,
+    -121,  -120,  -121,   -35,   111,   112,   110,   107,    76,   123,
+     126,  -121,  -121,  -121
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     2,     3,    10,     4,    12,     5,    21,    36,    37,
-      38,    67,   143,    39,    99,   123,   103,    40,    41,    42,
-      43,   138,    44,    96,    57,    58,    59,    60,    61,    78,
-      97,   126,    84,    88,    92
+       0,     2,     3,    10,     4,    12,     5,    30,    21,    41,
+      42,    43,   126,    44,   105,   128,   108,    45,    46,    47,
+      48,   139,    49,    99,    60,    61,    62,    63,    64,   100,
+     103,    87,    91,    95
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_int16 yytable[] =
+static const yytype_uint8 yytable[] =
 {
-      56,    70,   107,     6,    77,   139,     1,    49,    50,    27,
-     -63,    49,    50,     7,    51,    48,    52,     6,    51,    53,
-      52,     8,    25,    53,    79,    98,    26,    23,    54,    55,
-      82,    83,    54,    55,    94,    95,   155,   100,   124,   104,
-     125,    49,    50,    82,    83,   112,   108,   109,    51,   102,
-      52,    45,    73,    53,    82,    83,    65,     9,   118,    49,
-      50,    13,    54,    55,    66,   149,    51,   144,    52,   119,
-      29,    53,    70,    15,    82,    83,    14,    30,    31,    32,
-      54,    55,    33,   137,   137,    34,    29,    82,    83,   131,
-      16,    35,   140,    30,    31,    32,    29,    19,    33,   145,
-      22,    34,   132,    30,    31,    32,    47,    69,    33,    20,
-      26,    34,    74,    29,    70,   137,    26,   106,    82,    83,
-      30,    31,    32,    29,   141,    33,   142,   157,    34,    28,
-      30,    31,    32,    29,   130,    33,    86,    87,    34,    24,
-      30,    31,    32,    29,   148,    33,    80,    81,    34,   120,
-      30,    31,    32,   121,   154,    33,    45,   127,    34,    49,
-      50,   128,    46,   136,    62,   133,    51,    71,    52,   121,
-      63,    53,    64,    89,    90,    91,    68,    75,    72,    76,
-      85,    93,   105,    73,   101,   117,   122,   111,   129,   146,
-     135,   147,   150,   151,    11,    17,    18,   152,   153,   113,
-     116,   156,   114,   110,     0,     0,   115,   134
+      59,    73,    77,   140,    52,    53,    80,     8,    85,    86,
+       6,    54,    81,    55,    85,    86,    56,     6,    89,    90,
+       7,    82,   104,   116,    25,    57,    58,    23,    26,   122,
+     155,    97,    98,    52,    53,   106,   109,    73,    85,    86,
+      54,   107,    55,   112,   113,    56,    27,    33,     1,    52,
+      53,    26,    34,   123,    57,    58,    54,   145,    55,    51,
+     124,    56,     9,    26,   125,    52,    53,    68,    31,    50,
+      57,    58,    54,    69,    55,    70,   101,    56,   102,    85,
+      86,   129,   138,   138,    35,   130,    57,    58,    13,   149,
+     141,    36,    37,    38,   132,   146,    39,    85,    86,    40,
+     134,    92,    93,    94,   125,    72,    35,    85,    86,    73,
+     138,    15,   133,    36,    37,    38,   156,    35,    39,    14,
+     143,    40,   144,    16,    36,    37,    38,    76,    35,    39,
+      19,    20,    40,    83,    84,    36,    37,    38,   111,    35,
+      39,    22,    29,    40,    28,    24,    36,    37,    38,   148,
+      35,    39,    31,    32,    40,    65,    74,    36,    37,    38,
+     154,    66,    39,    67,    35,    40,    71,    75,    52,    53,
+     137,    36,    37,    38,    50,    54,    39,    55,    78,    40,
+      56,    88,    79,    96,   110,   121,   135,   127,   147,   131,
+     150,   136,   142,   152,   151,    11,    17,    18,   117,   153,
+     118,   119,   120,   114,     0,     0,     0,   115
 };
 
 static const yytype_int16 yycheck[] =
 {
-      29,    36,    73,     5,    20,   119,     4,     8,     9,    22,
-      26,     8,     9,    15,    15,    28,    17,     5,    15,    20,
-      17,     0,    21,    20,    53,    26,    25,    15,    29,    30,
-       6,     7,    29,    30,    63,    64,   150,    66,    15,    68,
-      17,     8,     9,     6,     7,    21,    75,    76,    15,    16,
-      17,    22,    23,    20,     6,     7,    20,     4,    21,     8,
-       9,    20,    29,    30,    28,   136,    15,    16,    17,    21,
-       3,    20,   107,    15,     6,     7,    20,    10,    11,    12,
-      29,    30,    15,   118,   119,    18,     3,     6,     7,    21,
-       4,    24,   121,    10,    11,    12,     3,    21,    15,   128,
-      20,    18,    21,    10,    11,    12,    21,    24,    15,    15,
-      25,    18,    21,     3,   149,   150,    25,    24,     6,     7,
-      10,    11,    12,     3,    25,    15,    27,   156,    18,    20,
-      10,    11,    12,     3,    24,    15,    30,    31,    18,    23,
-      10,    11,    12,     3,    24,    15,    54,    55,    18,    21,
-      10,    11,    12,    25,    24,    15,    22,    21,    18,     8,
-       9,    25,    15,    23,    15,    21,    15,    22,    17,    25,
-      20,    20,    20,    32,    33,    34,    20,    20,    25,    20,
-      14,    26,    15,    23,    26,    17,    17,    26,    26,    17,
-      27,    27,    13,    17,     3,    10,    10,    27,    27,    84,
-      92,    28,    85,    77,    -1,    -1,    88,   111
+      35,    41,    50,   123,     8,     9,    20,     0,     6,     7,
+       5,    15,    26,    17,     6,     7,    20,     5,    30,    31,
+      15,    56,    26,    21,    21,    29,    30,    15,    25,    21,
+     150,    66,    67,     8,     9,    70,    71,    77,     6,     7,
+      15,    16,    17,    78,    79,    20,    22,    21,     4,     8,
+       9,    25,    28,    21,    29,    30,    15,    16,    17,    21,
+      21,    20,     4,    25,    25,     8,     9,    20,    22,    23,
+      29,    30,    15,    26,    17,    28,    15,    20,    17,     6,
+       7,    21,   122,   123,     3,    25,    29,    30,    20,   137,
+     125,    10,    11,    12,    21,   130,    15,     6,     7,    18,
+      21,    32,    33,    34,    25,    24,     3,     6,     7,   149,
+     150,    15,    21,    10,    11,    12,   151,     3,    15,    20,
+      25,    18,    27,     4,    10,    11,    12,    24,     3,    15,
+      21,    15,    18,    57,    58,    10,    11,    12,    24,     3,
+      15,    20,    24,    18,    20,    23,    10,    11,    12,    24,
+       3,    15,    22,    15,    18,    15,    22,    10,    11,    12,
+      24,    20,    15,    20,     3,    18,    20,    25,     8,     9,
+      23,    10,    11,    12,    23,    15,    15,    17,    20,    18,
+      20,    14,    20,    26,    15,    17,    27,    17,    17,    26,
+      13,    27,    27,    17,    28,     3,    10,    10,    87,    27,
+      88,    91,    95,    80,    -1,    -1,    -1,    81
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -856,48 +878,48 @@ static const yytype_int8 yystos[] =
 {
        0,     4,    36,    37,    39,    41,     5,    15,     0,     4,
       38,    39,    40,    20,    20,    15,     4,    40,    41,    21,
-      15,    42,    20,    15,    23,    21,    25,    42,    20,     3,
-      10,    11,    12,    15,    18,    24,    43,    44,    45,    48,
-      52,    53,    54,    55,    57,    22,    15,    21,    42,     8,
-       9,    15,    17,    20,    29,    30,    58,    59,    60,    61,
-      62,    63,    15,    20,    20,    20,    28,    46,    20,    24,
-      44,    22,    25,    23,    21,    20,    20,    20,    64,    58,
-      63,    63,     6,     7,    67,    14,    30,    31,    68,    32,
-      33,    34,    69,    26,    58,    58,    58,    65,    26,    49,
-      58,    26,    16,    51,    58,    15,    24,    43,    58,    58,
-      65,    26,    21,    59,    60,    61,    62,    17,    21,    21,
-      21,    25,    17,    50,    15,    17,    66,    21,    25,    26,
-      24,    21,    21,    21,    66,    27,    23,    44,    56,    56,
-      58,    25,    27,    47,    16,    58,    17,    27,    24,    43,
-      13,    17,    27,    27,    24,    56,    28,    58
+      15,    43,    20,    15,    23,    21,    25,    43,    20,    24,
+      42,    22,    15,    21,    43,     3,    10,    11,    12,    15,
+      18,    44,    45,    46,    48,    52,    53,    54,    55,    57,
+      23,    21,     8,     9,    15,    17,    20,    29,    30,    58,
+      59,    60,    61,    62,    63,    15,    20,    20,    20,    26,
+      28,    20,    24,    45,    22,    25,    24,    44,    20,    20,
+      20,    26,    58,    63,    63,     6,     7,    66,    14,    30,
+      31,    67,    32,    33,    34,    68,    26,    58,    58,    58,
+      64,    15,    17,    65,    26,    49,    58,    16,    51,    58,
+      15,    24,    58,    58,    64,    65,    21,    59,    60,    61,
+      62,    17,    21,    21,    21,    25,    47,    17,    50,    21,
+      25,    26,    21,    21,    21,    27,    27,    23,    45,    56,
+      56,    58,    27,    25,    27,    16,    58,    17,    24,    44,
+      13,    28,    17,    27,    24,    56,    58
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    35,    36,    36,    37,    37,    38,    38,    39,    40,
-      40,    41,    41,    42,    42,    42,    43,    43,    44,    44,
-      45,    46,    47,    45,    45,    45,    45,    45,    45,    48,
+      40,    42,    41,    41,    43,    43,    43,    44,    44,    45,
+      45,    46,    47,    46,    46,    46,    46,    46,    46,    48,
       48,    49,    50,    50,    51,    51,    51,    51,    52,    52,
       52,    53,    54,    55,    56,    56,    56,    57,    57,    57,
       57,    58,    58,    59,    59,    60,    60,    61,    61,    62,
-      62,    62,    63,    64,    63,    63,    63,    63,    63,    63,
-      65,    65,    65,    66,    66,    67,    67,    68,    68,    69,
-      69,    69
+      62,    62,    63,    63,    63,    63,    63,    63,    63,    64,
+      64,    64,    65,    65,    66,    66,    67,    67,    68,    68,
+      68
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     3,     1,     2,     1,     2,     1,     6,     8,
-       7,     7,     6,     3,     1,     0,     2,     1,     2,     1,
-       1,     0,     0,     8,     1,     4,     4,     2,     0,     3,
+       7,     0,     8,     6,     3,     1,     0,     2,     1,     2,
+       1,     1,     0,     7,     1,     4,     4,     2,     0,     3,
        3,     3,     3,     1,     3,     3,     1,     1,     1,     1,
        1,     5,     5,     7,     1,     3,     2,     3,     6,     2,
        5,     3,     1,     3,     1,     3,     1,     3,     1,     2,
-       2,     1,     1,     0,     5,     4,     4,     4,     3,     1,
-       3,     1,     0,     1,     1,     1,     1,     1,     1,     1,
-       1,     1
+       2,     1,     1,     4,     4,     4,     4,     3,     1,     3,
+       1,     0,     1,     1,     1,     1,     1,     1,     1,     1,
+       1
 };
 
 
@@ -1582,7 +1604,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: FUNCT_DECLS FUNCT_DEFS FUNCT_MAIN  */
-#line 74 "lexical_analyzer.y"
+#line 97 "lexical_analyzer.y"
                                   {
 
    char* temp = concat_strings("ujp $main\n",(yyvsp[-1].nodo).code);
@@ -1593,48 +1615,83 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
    free((yyvsp[0].nodo).code);
 }
-#line 1597 "y.tab.c"
+#line 1619 "y.tab.c"
     break;
 
   case 3: /* S: FUNCT_MAIN  */
-#line 86 "lexical_analyzer.y"
+#line 109 "lexical_analyzer.y"
 {
    //printf("El codigo generado es:\n%s",$1.code);
    fwrite((yyvsp[0].nodo).code,1,strlen((yyvsp[0].nodo).code),out);
 }
-#line 1606 "y.tab.c"
+#line 1628 "y.tab.c"
     break;
 
   case 6: /* FUNCT_DEFS: FUNCT_DEFS FUNCT_DEF  */
-#line 96 "lexical_analyzer.y"
+#line 119 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,(yyvsp[0].nodo).code);
 
    free((yyvsp[-1].nodo).code);
    free((yyvsp[0].nodo).code);
 }
-#line 1617 "y.tab.c"
+#line 1639 "y.tab.c"
     break;
 
   case 7: /* FUNCT_DEFS: FUNCT_DEF  */
-#line 104 "lexical_analyzer.y"
+#line 127 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1625 "y.tab.c"
+#line 1647 "y.tab.c"
     break;
 
   case 8: /* FUNCT_DECL: FUNCTION ID '(' LISTA_ARGS_DEF ')' ';'  */
-#line 112 "lexical_analyzer.y"
+#line 135 "lexical_analyzer.y"
 {
+   if(check_function_existence((yyvsp[-4].value))){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already declared",(yyvsp[-4].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+
+   declare_function(strdup((yyvsp[-4].value)),(yyvsp[-2].nodo).count);
+
+   free((yyvsp[-4].value));
+   free((yyvsp[-2].nodo).code);
 
 }
-#line 1633 "y.tab.c"
+#line 1666 "y.tab.c"
     break;
 
   case 9: /* FUNCT_DEF: FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' CODE '}'  */
-#line 119 "lexical_analyzer.y"
+#line 153 "lexical_analyzer.y"
 {
+   free(actual_scope);
+   actual_scope = strdup("");
+
+   if(is_valid_definition((yyvsp[-6].value),(yyvsp[-4].nodo).count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s not declared",(yyvsp[-6].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_definition((yyvsp[-6].value),(yyvsp[-4].nodo).count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already defined",(yyvsp[-6].value));
+      yyerror(error_string);
+      YYABORT;
+   } else if(is_valid_definition((yyvsp[-6].value),(yyvsp[-4].nodo).count) == -2){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Definition of function %s does not match number of args of declaration",(yyvsp[-6].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+
+   define_function((yyvsp[-6].value));
+
+
    //hacer validaciones
    char* temp1 = malloc(100);
 
@@ -1657,12 +1714,34 @@ yyreduce:
 
 
 }
-#line 1661 "y.tab.c"
+#line 1718 "y.tab.c"
     break;
 
   case 10: /* FUNCT_DEF: FUNCTION ID '(' LISTA_ARGS_DEF ')' '{' '}'  */
-#line 144 "lexical_analyzer.y"
+#line 202 "lexical_analyzer.y"
 {
+
+   if(is_valid_definition((yyvsp[-5].value),(yyvsp[-3].nodo).count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s not declared",(yyvsp[-5].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_definition((yyvsp[-5].value),(yyvsp[-3].nodo).count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s already defined",(yyvsp[-5].value));
+      yyerror(error_string);
+      YYABORT;
+   } else if(is_valid_definition((yyvsp[-5].value),(yyvsp[-3].nodo).count) == -2){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Definition of function %s does not match number of args of declaration",(yyvsp[-5].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+
+
+   define_function((yyvsp[-5].value));
+
    char* temp1 = malloc(100);
 
    sprintf(temp1,"lab $%s\nscope \n",(yyvsp[-5].value));
@@ -1679,12 +1758,29 @@ yyreduce:
    free((yyvsp[-3].nodo).code);
 
 }
-#line 1683 "y.tab.c"
+#line 1762 "y.tab.c"
     break;
 
-  case 11: /* FUNCT_MAIN: FUNCTION MAIN '(' ')' '{' CODE '}'  */
-#line 165 "lexical_analyzer.y"
+  case 11: /* $@1: %empty  */
+#line 246 "lexical_analyzer.y"
+{ 
+   free(actual_scope);
+   actual_scope = strdup("main");
+}
+#line 1771 "y.tab.c"
+    break;
+
+  case 12: /* FUNCT_MAIN: FUNCTION MAIN '(' ')' '{' $@1 CODE '}'  */
+#line 252 "lexical_analyzer.y"
 {
+   char* error_string = check_undefined_function();
+
+   if(strcmp(error_string,"") != 0){
+
+      yyerror(error_string);
+      YYABORT;
+   }
+
    char* temp = concat_strings("lab $main\nscope \n",(yyvsp[-1].nodo).code);
 
    (yyval.nodo).code = concat_strings(temp,"endscope \n");
@@ -1695,21 +1791,40 @@ yyreduce:
 
 
 }
-#line 1699 "y.tab.c"
+#line 1795 "y.tab.c"
     break;
 
-  case 12: /* FUNCT_MAIN: FUNCTION MAIN '(' ')' '{' '}'  */
-#line 178 "lexical_analyzer.y"
+  case 13: /* FUNCT_MAIN: FUNCTION MAIN '(' ')' '{' '}'  */
+#line 273 "lexical_analyzer.y"
 {
+   char* error_string = check_undefined_function();
+
+   if(strcmp(error_string,"") != 0){
+
+      yyerror(error_string);
+      YYABORT;
+   }
+
+
    (yyval.nodo).code = strdup("lab $main\nscope \nendscope \n");
 
 }
-#line 1708 "y.tab.c"
+#line 1813 "y.tab.c"
     break;
 
-  case 13: /* LISTA_ARGS_DEF: LISTA_ARGS_DEF ',' ID  */
-#line 187 "lexical_analyzer.y"
+  case 14: /* LISTA_ARGS_DEF: LISTA_ARGS_DEF ',' ID  */
+#line 291 "lexical_analyzer.y"
 {
+   if(check_variable_existence((yyvsp[0].value),actual_scope) == 1){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",(yyvsp[0].value));
+      yyerror(error_string);
+      YYERROR;
+   }
+   // printf("ke:%s\n",$<value>3);
+
+   push_variable(strdup((yyvsp[0].value)),actual_scope);
+
    (yyval.nodo).count = (yyvsp[-2].nodo).count + 1;
 
    char* temp = malloc(200);
@@ -1721,12 +1836,18 @@ yyreduce:
    free((yyvsp[-2].nodo).code);
    free((yyvsp[0].value));
 }
-#line 1725 "y.tab.c"
+#line 1840 "y.tab.c"
     break;
 
-  case 14: /* LISTA_ARGS_DEF: ID  */
-#line 201 "lexical_analyzer.y"
+  case 15: /* LISTA_ARGS_DEF: ID  */
+#line 315 "lexical_analyzer.y"
 {
+   free(actual_scope);
+   actual_scope = malloc(100);
+   sprintf(actual_scope,"scope%d",id_actual_scope++);
+   push_variable(strdup((yyvsp[0].value)),actual_scope);
+
+
    (yyval.nodo).count = 1;
 
    (yyval.nodo).code = malloc(200);
@@ -1735,88 +1856,86 @@ yyreduce:
 
    free((yyvsp[0].value));
 }
-#line 1739 "y.tab.c"
+#line 1860 "y.tab.c"
     break;
 
-  case 15: /* LISTA_ARGS_DEF: %empty  */
-#line 212 "lexical_analyzer.y"
+  case 16: /* LISTA_ARGS_DEF: %empty  */
+#line 332 "lexical_analyzer.y"
 {
+   free(actual_scope);
+   actual_scope = malloc(100);
+   sprintf(actual_scope,"scope%d",id_actual_scope++);
    (yyval.nodo).count = 0;
    (yyval.nodo).code = strdup("");
 }
-#line 1748 "y.tab.c"
+#line 1872 "y.tab.c"
     break;
 
-  case 16: /* CODE: CODE I  */
-#line 221 "lexical_analyzer.y"
+  case 17: /* CODE: CODE I  */
+#line 344 "lexical_analyzer.y"
 { 
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,(yyvsp[0].nodo).code);
 
    free((yyvsp[-1].nodo).code);
 
 }
-#line 1759 "y.tab.c"
+#line 1883 "y.tab.c"
     break;
 
-  case 17: /* CODE: I  */
-#line 229 "lexical_analyzer.y"
+  case 18: /* CODE: I  */
+#line 352 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1767 "y.tab.c"
+#line 1891 "y.tab.c"
     break;
 
-  case 18: /* I: IN ';'  */
-#line 236 "lexical_analyzer.y"
+  case 19: /* I: IN ';'  */
+#line 359 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 }
-#line 1775 "y.tab.c"
+#line 1899 "y.tab.c"
     break;
 
-  case 19: /* I: SUB_CODE  */
-#line 241 "lexical_analyzer.y"
+  case 20: /* I: SUB_CODE  */
+#line 364 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1783 "y.tab.c"
+#line 1907 "y.tab.c"
     break;
 
-  case 20: /* IN: ID_ASSIGN  */
-#line 249 "lexical_analyzer.y"
+  case 21: /* IN: ID_ASSIGN  */
+#line 372 "lexical_analyzer.y"
           {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 1789 "y.tab.c"
-    break;
-
-  case 21: /* $@1: %empty  */
-#line 252 "lexical_analyzer.y"
-{
-   if(!check_symbol_existence((yyvsp[0].value))) {
-      yyerror("Variable does not exists");
-      YYERROR;
-   }
-}
-#line 1800 "y.tab.c"
+#line 1913 "y.tab.c"
     break;
 
   case 22: /* @2: %empty  */
-#line 259 "lexical_analyzer.y"
+#line 375 "lexical_analyzer.y"
 {
+   if(!check_variable_existence((yyvsp[-2].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[-2].value));
+      yyerror(error_string);
+      YYABORT;
+   }
 
    (yyval.nodo).code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad \n";
-   sprintf((yyval.nodo).code,template_string,(yyvsp[-3].value),(yyvsp[0].nodo).code);
+   sprintf((yyval.nodo).code,template_string,(yyvsp[-2].value),(yyvsp[0].nodo).code);
 
-   free((yyvsp[-3].value));
+   free((yyvsp[-2].value));
    free((yyvsp[0].nodo).code);
 
 
 }
-#line 1816 "y.tab.c"
+#line 1935 "y.tab.c"
     break;
 
-  case 23: /* IN: ID $@1 '[' NUM_LIKE @2 ']' '=' exp  */
-#line 271 "lexical_analyzer.y"
+  case 23: /* IN: ID '[' NUM_LIKE @2 ']' '=' exp  */
+#line 393 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-3].nodo).code,(yyvsp[0].nodo).code);
 
@@ -1826,20 +1945,33 @@ yyreduce:
    free((yyvsp[-3].nodo).code);
    free((yyvsp[0].nodo).code);
 }
-#line 1830 "y.tab.c"
+#line 1949 "y.tab.c"
     break;
 
   case 24: /* IN: DECL  */
-#line 282 "lexical_analyzer.y"
+#line 404 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 1838 "y.tab.c"
+#line 1957 "y.tab.c"
     break;
 
   case 25: /* IN: ID '(' LISTA_ARGS_CALL ')'  */
-#line 287 "lexical_analyzer.y"
+#line 409 "lexical_analyzer.y"
 {
+   if(is_valid_call((yyvsp[-3].value),(yyvsp[-1].nodo).count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s does not exists",(yyvsp[-3].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_call((yyvsp[-3].value),(yyvsp[-1].nodo).count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Call to function %s does not match number of args",(yyvsp[-3].value));
+      yyerror(error_string);
+      YYABORT;
+
+   }
    char* temp = malloc(100);
    sprintf(temp,"call_jp $%s\npop \n",(yyvsp[-3].value));
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,temp);
@@ -1848,41 +1980,53 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 1852 "y.tab.c"
+#line 1984 "y.tab.c"
     break;
 
   case 26: /* IN: PRINT '(' LISTA_ARGS_PRINT ')'  */
-#line 298 "lexical_analyzer.y"
+#line 433 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 
 }
-#line 1861 "y.tab.c"
+#line 1993 "y.tab.c"
     break;
 
   case 27: /* IN: RETURN exp  */
-#line 303 "lexical_analyzer.y"
+#line 438 "lexical_analyzer.y"
            {
    //no hacerlo en main
+   // printf("%sa",actual_scope);
+   if(strcmp(actual_scope,"main") == 0){
+      yyerror("Main cannnot return");
+      YYABORT;
+   }
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"endscope \nreturn_jp \n");
 
    free((yyvsp[0].nodo).code);
 
 }
-#line 1873 "y.tab.c"
+#line 2010 "y.tab.c"
     break;
 
   case 28: /* IN: %empty  */
-#line 311 "lexical_analyzer.y"
+#line 451 "lexical_analyzer.y"
        {
    (yyval.nodo).code = strdup("");
 }
-#line 1881 "y.tab.c"
+#line 2018 "y.tab.c"
     break;
 
   case 29: /* ID_ASSIGN: ID '=' LISTA_ARRAY  */
-#line 318 "lexical_analyzer.y"
+#line 458 "lexical_analyzer.y"
 {
+   if(!check_variable_existence((yyvsp[-2].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[-2].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+
    char* actual_code = strdup("");
    int size = (yyvsp[0].lista_num)[0];
 
@@ -1911,12 +2055,19 @@ yyreduce:
    free(actual_code);
 
 }
-#line 1915 "y.tab.c"
+#line 2059 "y.tab.c"
     break;
 
   case 30: /* ID_ASSIGN: ID '=' exp  */
-#line 349 "lexical_analyzer.y"
+#line 496 "lexical_analyzer.y"
 {
+
+   if(!check_variable_existence((yyvsp[-2].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[-2].value));
+      yyerror(error_string);
+      YYABORT;
+   }
    char* temp1 = (char*) malloc(100);
    sprintf(temp1,"lda %s\n",(yyvsp[-2].value));
    char* temp2 = concat_strings(temp1,(yyvsp[0].nodo).code);
@@ -1929,17 +2080,17 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 1933 "y.tab.c"
+#line 2084 "y.tab.c"
     break;
 
   case 31: /* LISTA_ARRAY: '[' LISTA_ARGS_NUM ']'  */
-#line 364 "lexical_analyzer.y"
+#line 518 "lexical_analyzer.y"
                                      {(yyval.lista_num) = (yyvsp[-1].lista_num);}
-#line 1939 "y.tab.c"
+#line 2090 "y.tab.c"
     break;
 
   case 32: /* LISTA_ARGS_NUM: LISTA_ARGS_NUM ',' NUMERO  */
-#line 369 "lexical_analyzer.y"
+#line 523 "lexical_analyzer.y"
 {
    (yyval.lista_num) = (yyvsp[-2].lista_num);
    int size = (yyval.lista_num)[0];
@@ -1948,11 +2099,11 @@ yyreduce:
    // printf("%f\n",atof($<value>3));
 
 }
-#line 1952 "y.tab.c"
+#line 2103 "y.tab.c"
     break;
 
   case 33: /* LISTA_ARGS_NUM: NUMERO  */
-#line 379 "lexical_analyzer.y"
+#line 533 "lexical_analyzer.y"
 {
    (yyval.lista_num) = (double*) malloc(sizeof(double)*100);
    (yyval.lista_num)[0] = 1;
@@ -1960,11 +2111,11 @@ yyreduce:
 
    // printf("%f\n",atof($<value>1));
 }
-#line 1964 "y.tab.c"
+#line 2115 "y.tab.c"
     break;
 
   case 34: /* LISTA_ARGS_PRINT: LISTA_ARGS_PRINT ',' exp  */
-#line 389 "lexical_analyzer.y"
+#line 543 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[0].nodo).code,"print_c \n");
 
@@ -1974,11 +2125,11 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 1978 "y.tab.c"
+#line 2129 "y.tab.c"
     break;
 
   case 35: /* LISTA_ARGS_PRINT: LISTA_ARGS_PRINT ',' CADENA  */
-#line 400 "lexical_analyzer.y"
+#line 554 "lexical_analyzer.y"
 {
    char* temp = malloc(200);
 
@@ -1989,11 +2140,11 @@ yyreduce:
    free((yyvsp[0].value));
 
 }
-#line 1993 "y.tab.c"
+#line 2144 "y.tab.c"
     break;
 
   case 36: /* LISTA_ARGS_PRINT: CADENA  */
-#line 412 "lexical_analyzer.y"
+#line 566 "lexical_analyzer.y"
 {
    (yyval.nodo).code = malloc(200);
    sprintf((yyval.nodo).code,"print_s %s\n",(yyvsp[0].value));
@@ -2001,11 +2152,11 @@ yyreduce:
    free((yyvsp[0].value));
 
 }
-#line 2005 "y.tab.c"
+#line 2156 "y.tab.c"
     break;
 
   case 37: /* LISTA_ARGS_PRINT: exp  */
-#line 421 "lexical_analyzer.y"
+#line 575 "lexical_analyzer.y"
 {
 
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"print_c \n");
@@ -2013,29 +2164,29 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2017 "y.tab.c"
+#line 2168 "y.tab.c"
     break;
 
   case 38: /* SUB_CODE: IF_BLOCK  */
-#line 431 "lexical_analyzer.y"
+#line 585 "lexical_analyzer.y"
                    {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2023 "y.tab.c"
+#line 2174 "y.tab.c"
     break;
 
   case 39: /* SUB_CODE: IF_ELSE_BLOCK  */
-#line 431 "lexical_analyzer.y"
+#line 585 "lexical_analyzer.y"
                                                         {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2029 "y.tab.c"
+#line 2180 "y.tab.c"
     break;
 
   case 40: /* SUB_CODE: WHILE_BLOCK  */
-#line 431 "lexical_analyzer.y"
+#line 585 "lexical_analyzer.y"
                                                                                            {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2035 "y.tab.c"
+#line 2186 "y.tab.c"
     break;
 
   case 41: /* WHILE_BLOCK: WHILE '(' exp ')' P  */
-#line 436 "lexical_analyzer.y"
+#line 590 "lexical_analyzer.y"
 {
    int start_label = actual_label++;
    int end_label = actual_label++;
@@ -2063,11 +2214,11 @@ yyreduce:
    free(temp6);
 
 }
-#line 2067 "y.tab.c"
+#line 2218 "y.tab.c"
     break;
 
   case 42: /* IF_BLOCK: IF '(' exp ')' P  */
-#line 467 "lexical_analyzer.y"
+#line 621 "lexical_analyzer.y"
 {
 
    int label = actual_label++;
@@ -2093,11 +2244,11 @@ yyreduce:
    free(temp3);
    free(temp4);
 }
-#line 2097 "y.tab.c"
+#line 2248 "y.tab.c"
     break;
 
   case 43: /* IF_ELSE_BLOCK: IF '(' exp ')' P ELSE P  */
-#line 495 "lexical_analyzer.y"
+#line 649 "lexical_analyzer.y"
 {
    int label_else = actual_label++;
    int label_end = actual_label++;
@@ -2133,32 +2284,34 @@ yyreduce:
    free(temp6);
 
 }
-#line 2137 "y.tab.c"
+#line 2288 "y.tab.c"
     break;
 
   case 44: /* P: I  */
-#line 531 "lexical_analyzer.y"
+#line 685 "lexical_analyzer.y"
      {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2143 "y.tab.c"
+#line 2294 "y.tab.c"
     break;
 
   case 45: /* P: '{' CODE '}'  */
-#line 531 "lexical_analyzer.y"
+#line 685 "lexical_analyzer.y"
                                          {(yyval.nodo).code = (yyvsp[-1].nodo).code;}
-#line 2149 "y.tab.c"
+#line 2300 "y.tab.c"
     break;
 
   case 46: /* P: '{' '}'  */
-#line 531 "lexical_analyzer.y"
+#line 685 "lexical_analyzer.y"
                                                                          {(yyval.nodo).code =strdup("");}
-#line 2155 "y.tab.c"
+#line 2306 "y.tab.c"
     break;
 
   case 47: /* DECL: DECL ',' ID  */
-#line 536 "lexical_analyzer.y"
+#line 690 "lexical_analyzer.y"
 {
-   if(check_symbol_existence((yyvsp[0].value))){
-      yyerror("Variable already exists");
+   if(check_variable_existence((yyvsp[0].value),actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",(yyvsp[0].value));
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -2167,21 +2320,23 @@ yyreduce:
 
    sprintf(temp,"new_var %s\n",(yyvsp[0].value));
    (yyval.nodo).code = concat_strings((yyvsp[-2].nodo).code,temp);
-   push_symbol((yyvsp[0].value));
+   push_variable((yyvsp[0].value),actual_scope);
 
    free((yyvsp[0].value));
    free((yyvsp[-2].nodo).code);
    free(temp);
 
 }
-#line 2178 "y.tab.c"
+#line 2331 "y.tab.c"
     break;
 
   case 48: /* DECL: DECL ',' ID '[' NUMERO ']'  */
-#line 556 "lexical_analyzer.y"
+#line 712 "lexical_analyzer.y"
 {
-   if(check_symbol_existence((yyvsp[-3].value))){
-      yyerror("Variable already exists");
+   if(check_variable_existence((yyvsp[-3].value),actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",(yyvsp[-3].value));
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -2200,39 +2355,43 @@ yyreduce:
    sprintf(temp,template_string,(yyvsp[-3].value),(yyvsp[-3].value),num_i);
 
    (yyval.nodo).code = concat_strings((yyvsp[-5].nodo).code,temp);
-   push_symbol((yyvsp[-3].value));
+   push_variable((yyvsp[-3].value),actual_scope);
 
    free(temp);
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 2210 "y.tab.c"
+#line 2365 "y.tab.c"
     break;
 
   case 49: /* DECL: LET ID  */
-#line 585 "lexical_analyzer.y"
+#line 743 "lexical_analyzer.y"
 {
-   if(check_symbol_existence((yyvsp[0].value))){
-      // yyerror("Variable already exists");
-      // YYABORT; 
+   if(check_variable_existence((yyvsp[0].value),actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",(yyvsp[0].value));
+      yyerror(error_string);
+      YYABORT; 
    }
 
    
    (yyval.nodo).code = (char*) malloc(100);
    sprintf((yyval.nodo).code,"new_var %s\n",(yyvsp[0].value));
-   push_symbol((yyvsp[0].value));
+   push_variable((yyvsp[0].value),actual_scope);
 
    free((yyvsp[0].value));
    
 }
-#line 2229 "y.tab.c"
+#line 2386 "y.tab.c"
     break;
 
   case 50: /* DECL: LET ID '[' NUMERO ']'  */
-#line 601 "lexical_analyzer.y"
+#line 761 "lexical_analyzer.y"
 {
-   if(check_symbol_existence((yyvsp[-3].value))){
-      yyerror("Variable already exists");
+   if(check_variable_existence((yyvsp[-3].value),actual_scope)){
+      char * error_string = malloc(100);
+      sprintf(error_string,"Variable %s already exists",(yyvsp[-3].value));
+      yyerror(error_string);
       YYABORT; 
    }
 
@@ -2251,16 +2410,16 @@ yyreduce:
    (yyval.nodo).code = (char*) malloc(200);
    char template_string[] = "new_var %s\nlda %s\nnew_arr %d\nsto \n";
    sprintf((yyval.nodo).code,template_string,(yyvsp[-3].value),(yyvsp[-3].value),num_i);
-   push_symbol((yyvsp[-3].value));
+   push_variable((yyvsp[-3].value),actual_scope);
 
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 2260 "y.tab.c"
+#line 2419 "y.tab.c"
     break;
 
   case 51: /* exp: exp LOGIC level1  */
-#line 632 "lexical_analyzer.y"
+#line 794 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"and") == 0)
@@ -2273,21 +2432,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2277 "y.tab.c"
+#line 2436 "y.tab.c"
     break;
 
   case 52: /* exp: level1  */
-#line 646 "lexical_analyzer.y"
+#line 808 "lexical_analyzer.y"
 {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2287 "y.tab.c"
+#line 2446 "y.tab.c"
     break;
 
   case 53: /* level1: level1 COMP level2  */
-#line 655 "lexical_analyzer.y"
+#line 817 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),">=") == 0)
@@ -2307,21 +2466,21 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2311 "y.tab.c"
+#line 2470 "y.tab.c"
     break;
 
   case 54: /* level1: level2  */
-#line 675 "lexical_analyzer.y"
+#line 837 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2321 "y.tab.c"
+#line 2480 "y.tab.c"
     break;
 
   case 55: /* level2: level2 OP1 level3  */
-#line 684 "lexical_analyzer.y"
+#line 846 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"+") == 0)
@@ -2334,21 +2493,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2338 "y.tab.c"
+#line 2497 "y.tab.c"
     break;
 
   case 56: /* level2: level3  */
-#line 697 "lexical_analyzer.y"
+#line 859 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2348 "y.tab.c"
+#line 2507 "y.tab.c"
     break;
 
   case 57: /* level3: level3 OP2 UNARY  */
-#line 706 "lexical_analyzer.y"
+#line 868 "lexical_analyzer.y"
 {
 
 
@@ -2367,11 +2526,11 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2371 "y.tab.c"
+#line 2530 "y.tab.c"
     break;
 
   case 58: /* level3: UNARY  */
-#line 726 "lexical_analyzer.y"
+#line 888 "lexical_analyzer.y"
 {
 
 
@@ -2382,44 +2541,46 @@ yyreduce:
    //free($1.code);
    //free($1.name);
 }
-#line 2386 "y.tab.c"
+#line 2545 "y.tab.c"
     break;
 
   case 59: /* UNARY: '!' VALUE  */
-#line 740 "lexical_analyzer.y"
+#line 902 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"ne \n");
    free((yyvsp[0].nodo).code);
 
 }
-#line 2396 "y.tab.c"
+#line 2555 "y.tab.c"
     break;
 
   case 60: /* UNARY: '-' VALUE  */
-#line 748 "lexical_analyzer.y"
+#line 910 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"ldc -1\nmp \n");
 
    free((yyvsp[0].nodo).code);
 
 }
-#line 2407 "y.tab.c"
+#line 2566 "y.tab.c"
     break;
 
   case 61: /* UNARY: VALUE  */
-#line 756 "lexical_analyzer.y"
+#line 918 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 2415 "y.tab.c"
+#line 2574 "y.tab.c"
     break;
 
   case 62: /* VALUE: ID  */
-#line 764 "lexical_analyzer.y"
+#line 926 "lexical_analyzer.y"
 {
-   if(!check_symbol_existence((yyvsp[0].value))){
-      // yyerror("Variable does not exists");
-      // YYABORT;
+   if(!check_variable_existence((yyvsp[0].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[0].value));
+      yyerror(error_string);
+      YYABORT;
    }
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"lod %s\n",(yyvsp[0].value));
@@ -2427,38 +2588,46 @@ yyreduce:
    //$$.name = $<value>1;
    //printf("%s\n",$$.name);
 }
-#line 2431 "y.tab.c"
+#line 2592 "y.tab.c"
     break;
 
-  case 63: /* $@3: %empty  */
-#line 778 "lexical_analyzer.y"
+  case 63: /* VALUE: ID '[' NUM_LIKE ']'  */
+#line 943 "lexical_analyzer.y"
 {
-   if(!check_symbol_existence((yyvsp[0].value))) {
-      yyerror("Variable does not exists");
-      YYERROR;
+   if(!check_variable_existence((yyvsp[-3].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[-3].value));
+      yyerror(error_string);
+      YYABORT;
    }
-}
-#line 2442 "y.tab.c"
-    break;
-
-  case 64: /* VALUE: ID $@3 '[' NUM_LIKE ']'  */
-#line 785 "lexical_analyzer.y"
-{
    
    (yyval.nodo).code = (char*) malloc(200);
    char template_string[] = "lod %s\n%sad \nloa \n";
-   sprintf((yyval.nodo).code,template_string,(yyvsp[-4].value),(yyvsp[-1].nodo).code);
+   sprintf((yyval.nodo).code,template_string,(yyvsp[-3].value),(yyvsp[-1].nodo).code);
 
-   free((yyvsp[-4].value));
+   free((yyvsp[-3].value));
    free((yyvsp[-1].nodo).code);
 
 }
-#line 2457 "y.tab.c"
+#line 2613 "y.tab.c"
     break;
 
-  case 65: /* VALUE: ID '(' LISTA_ARGS_CALL ')'  */
-#line 797 "lexical_analyzer.y"
+  case 64: /* VALUE: ID '(' LISTA_ARGS_CALL ')'  */
+#line 961 "lexical_analyzer.y"
 {
+   if(is_valid_call((yyvsp[-3].value),(yyvsp[-1].nodo).count) == 0){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Function %s does not exists",(yyvsp[-3].value));
+      yyerror(error_string);
+      YYABORT;
+   }
+   else if(is_valid_call((yyvsp[-3].value),(yyvsp[-1].nodo).count) == -1){
+      char* error_string  = malloc(100);
+      sprintf(error_string,"Call to function %s does not match number of args",(yyvsp[-3].value));
+      yyerror(error_string);
+      YYABORT;
+
+   }
    char* temp = malloc(100);
    sprintf(temp,"call_jp $%s\n",(yyvsp[-3].value));
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,temp);
@@ -2467,37 +2636,37 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 2471 "y.tab.c"
+#line 2640 "y.tab.c"
     break;
 
-  case 66: /* VALUE: CEIL '(' exp ')'  */
-#line 808 "lexical_analyzer.y"
+  case 65: /* VALUE: CEIL '(' exp ')'  */
+#line 985 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,"ceil \n");
 
 }
-#line 2480 "y.tab.c"
+#line 2649 "y.tab.c"
     break;
 
-  case 67: /* VALUE: FLOOR '(' exp ')'  */
-#line 814 "lexical_analyzer.y"
+  case 66: /* VALUE: FLOOR '(' exp ')'  */
+#line 991 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,"floor \n");
 
 }
-#line 2489 "y.tab.c"
+#line 2658 "y.tab.c"
     break;
 
-  case 68: /* VALUE: '(' exp ')'  */
-#line 820 "lexical_analyzer.y"
+  case 67: /* VALUE: '(' exp ')'  */
+#line 997 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 }
-#line 2497 "y.tab.c"
+#line 2666 "y.tab.c"
     break;
 
-  case 69: /* VALUE: NUMERO  */
-#line 826 "lexical_analyzer.y"
+  case 68: /* VALUE: NUMERO  */
+#line 1003 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"ldc %s\n",(yyvsp[0].value));
@@ -2505,11 +2674,11 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2509 "y.tab.c"
+#line 2678 "y.tab.c"
     break;
 
-  case 70: /* LISTA_ARGS_CALL: LISTA_ARGS_CALL ',' exp  */
-#line 837 "lexical_analyzer.y"
+  case 69: /* LISTA_ARGS_CALL: LISTA_ARGS_CALL ',' exp  */
+#line 1014 "lexical_analyzer.y"
 {
    char* temp = concat_strings("lda $\n",(yyvsp[0].nodo).code);
 
@@ -2520,11 +2689,11 @@ yyreduce:
    free(temp);
    free((yyvsp[0].nodo).code);
 }
-#line 2524 "y.tab.c"
+#line 2693 "y.tab.c"
     break;
 
-  case 71: /* LISTA_ARGS_CALL: exp  */
-#line 849 "lexical_analyzer.y"
+  case 70: /* LISTA_ARGS_CALL: exp  */
+#line 1026 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings("lda $\n",(yyvsp[0].nodo).code);
    (yyval.nodo).count = 1;
@@ -2532,35 +2701,39 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2536 "y.tab.c"
+#line 2705 "y.tab.c"
     break;
 
-  case 72: /* LISTA_ARGS_CALL: %empty  */
-#line 859 "lexical_analyzer.y"
+  case 71: /* LISTA_ARGS_CALL: %empty  */
+#line 1036 "lexical_analyzer.y"
 {
    (yyval.nodo).code = strdup("");
    (yyval.nodo).count = 0;
 
 }
-#line 2546 "y.tab.c"
+#line 2715 "y.tab.c"
     break;
 
-  case 73: /* NUM_LIKE: ID  */
-#line 868 "lexical_analyzer.y"
+  case 72: /* NUM_LIKE: ID  */
+#line 1045 "lexical_analyzer.y"
 {
-   if(!check_symbol_existence((yyvsp[0].value))) {
-      yyerror("Variable does not exists");
-      YYERROR;
+
+   if(!check_variable_existence((yyvsp[0].value),actual_scope)){
+      char* error_string = malloc(100);
+      sprintf(error_string,"Variable %s does not exists",(yyvsp[0].value));
+      yyerror(error_string);
+      YYABORT;
    }
+   
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"lod %s\n",(yyvsp[0].value));
    free((yyvsp[0].value));
 }
-#line 2560 "y.tab.c"
+#line 2733 "y.tab.c"
     break;
 
-  case 74: /* NUM_LIKE: NUMERO  */
-#line 879 "lexical_analyzer.y"
+  case 73: /* NUM_LIKE: NUMERO  */
+#line 1060 "lexical_analyzer.y"
 { 
    double num_d = atof((yyvsp[0].value));
    int num_i = atoi((yyvsp[0].value));
@@ -2578,53 +2751,53 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2582 "y.tab.c"
+#line 2755 "y.tab.c"
     break;
 
-  case 75: /* LOGIC: AND  */
-#line 897 "lexical_analyzer.y"
+  case 74: /* LOGIC: AND  */
+#line 1078 "lexical_analyzer.y"
            {(yyval.value) = (yyvsp[0].value);}
-#line 2588 "y.tab.c"
+#line 2761 "y.tab.c"
     break;
 
-  case 76: /* LOGIC: OR  */
-#line 897 "lexical_analyzer.y"
+  case 75: /* LOGIC: OR  */
+#line 1078 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2594 "y.tab.c"
+#line 2767 "y.tab.c"
     break;
 
-  case 77: /* OP1: '+'  */
-#line 898 "lexical_analyzer.y"
+  case 76: /* OP1: '+'  */
+#line 1079 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2600 "y.tab.c"
+#line 2773 "y.tab.c"
     break;
 
-  case 78: /* OP1: '-'  */
-#line 898 "lexical_analyzer.y"
+  case 77: /* OP1: '-'  */
+#line 1079 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2606 "y.tab.c"
+#line 2779 "y.tab.c"
     break;
 
-  case 79: /* OP2: '*'  */
-#line 899 "lexical_analyzer.y"
+  case 78: /* OP2: '*'  */
+#line 1080 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2612 "y.tab.c"
+#line 2785 "y.tab.c"
     break;
 
-  case 80: /* OP2: '/'  */
-#line 899 "lexical_analyzer.y"
+  case 79: /* OP2: '/'  */
+#line 1080 "lexical_analyzer.y"
                                  {(yyval.value) = (yyvsp[0].value);}
-#line 2618 "y.tab.c"
+#line 2791 "y.tab.c"
     break;
 
-  case 81: /* OP2: '%'  */
-#line 899 "lexical_analyzer.y"
+  case 80: /* OP2: '%'  */
+#line 1080 "lexical_analyzer.y"
                                                         {(yyval.value) = (yyvsp[0].value);}
-#line 2624 "y.tab.c"
+#line 2797 "y.tab.c"
     break;
 
 
-#line 2628 "y.tab.c"
+#line 2801 "y.tab.c"
 
       default: break;
     }
@@ -2848,7 +3021,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 901 "lexical_analyzer.y"
+#line 1082 "lexical_analyzer.y"
 
 
 

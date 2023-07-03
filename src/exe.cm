@@ -1,87 +1,108 @@
-lab $main
+ujp $main
+lab $ke
 scope 
-new_var a
-new_var b
-new_var i
-new_var n
-lda a
-new_arr 6
 sto 
+new_var c
+lda c
+lod $
+sto 
+sto 
+new_var a
+lda a
+lod $
+sto 
+new_var b
+new_var d
+lda d
+new_arr 25
+sto 
+lda b
 lod a
+lod d
+ldc 5
+ad 
+loa 
+ad 
+sto 
+ldc 0
+endscope 
+return_jp 
+lab $ke1
+scope 
+sto 
+new_var c
+lda c
+lod $
+sto 
+sto 
+new_var a
+lda a
+lod $
+sto 
+new_var b
+new_var d
+lda d
+new_arr 25
+sto 
+new_var hola
+lda b
+lod b
+lod d
+lod b
+ad 
+loa 
+ad 
+sto 
+lod d
+lod b
+ad 
+ldc 23515.12351
+sto 
+lda hola
+new_arr 5
+sto 
+lod hola
 ldc 0
 ad 
-ldc 34.000000
+ldc 35.000000
 sto 
-lod a
+lod hola
 ldc 1
 ad 
-ldc 5.000000
+ldc 135.000000
 sto 
-lod a
+lod hola
 ldc 2
 ad 
-ldc 7.000000
+ldc 1235.000000
 sto 
-lod a
+lod hola
 ldc 3
 ad 
-ldc 8.000000
+ldc 1.000000
 sto 
-lod a
+lod hola
 ldc 4
-ad 
-ldc 9.000000
-sto 
-lod a
-ldc 5
 ad 
 ldc 0.000000
 sto 
-lda n
-ldc 5
-sto 
-lda i
 ldc 0
+endscope 
+return_jp 
+lab $main
+scope 
+new_var b
+new_var d
+lda d
+new_arr 25
 sto 
-lab L0
-lod i
-lod n
-le 
-ne 
-tjp L1
+new_var a
+lda b
 lod a
-lod i
+lod d
+ldc 5
 ad 
 loa 
-print_c 
-print_s  
-lda i
-lod i
-ldc 1
 ad 
 sto 
-ujp L0
-lab L1
-print_s \n
-ldc 5
-ldc 2
-dv 
-floor 
-print_c 
-print_s \n
-ldc 3.55
-ceil 
-ldc 5.5
-ad 
-print_c 
-print_s \n
-lda b
-ldc inf
-ldc -1
-mp 
-sto 
-ldc 0
-lod b
-ge 
-print_c 
 endscope 

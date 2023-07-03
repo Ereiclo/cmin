@@ -1,28 +1,40 @@
+
+function ke(a,c);
+function ke1(a,c);
+
+
+function ke(a,c){
+    let b,d[25];
+
+
+    b = a + d[5];
+
+}
+
+function ke1(a,c){
+    let b,d[25];
+    let hola;
+
+
+    b = b + d[b];
+    d[b] = 23515.12351;
+    hola = [2351,35,135,1235,1];
+
+
+}
+
+
+
 function main(){
-    let a,b;
-    let i,n;
+    let b,d[25];
+    let a;
 
 
-    a = [37,34,5,7,8,9];
-
-    n = 5;
-
-    i = 0;
-
-    while(i < n){
-        print(a[i]," ");
-        i = i + 1;
-    }
+    b = a + d[5];
 
 
-    print("\n");
-    print(floor(5/2),"\n");
-    print(ceil(3.55) + 5.5,"\n");
-    b = -inf;
-    print( 0 >  b);
 
 
-     
 
 }
 
