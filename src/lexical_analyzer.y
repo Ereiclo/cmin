@@ -465,6 +465,7 @@ ID '=' LISTA_ARRAY
 
    char* actual_code = strdup("");
    int size = $3[0];
+   // printf("%f\n",$3[1]);
 
    for(int i = 1; i < (size + 1);++i){
       char* prev_code = actual_code;
@@ -523,9 +524,9 @@ LISTA_ARGS_NUM ',' NUMERO
 {
    $$ = $1;
    int size = $$[0];
-   $$[size] = atof($<value>3);
-   $$[0] = size + 1;
-   // printf("%f\n",atof($<value>3));
+   $$[size+1] = atof($<value>3);
+   $$[0]++;
+   // printf("%f %d\n",atof($<value>3),size);
 
 } |
 

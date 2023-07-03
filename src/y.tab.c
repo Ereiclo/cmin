@@ -709,12 +709,12 @@ static const yytype_int16 yyrline[] =
        0,    97,    97,   108,   116,   116,   118,   126,   134,   152,
      201,   246,   244,   272,   290,   314,   331,   343,   351,   358,
      363,   372,   375,   374,   403,   408,   432,   438,   451,   457,
-     495,   518,   522,   532,   542,   553,   565,   574,   585,   585,
-     585,   589,   620,   648,   685,   685,   685,   689,   711,   742,
-     760,   793,   807,   816,   837,   845,   859,   867,   887,   901,
-     908,   917,   925,   941,   960,   984,   990,   996,  1002,  1013,
-    1025,  1034,  1044,  1059,  1078,  1078,  1079,  1079,  1080,  1080,
-    1080
+     496,   519,   523,   533,   543,   554,   566,   575,   586,   586,
+     586,   590,   621,   649,   686,   686,   686,   690,   712,   743,
+     761,   794,   808,   817,   838,   846,   860,   868,   888,   902,
+     909,   918,   926,   942,   961,   985,   991,   997,  1003,  1014,
+    1026,  1035,  1045,  1060,  1079,  1079,  1080,  1080,  1081,  1081,
+    1081
 };
 #endif
 
@@ -2029,6 +2029,7 @@ yyreduce:
 
    char* actual_code = strdup("");
    int size = (yyvsp[0].lista_num)[0];
+   // printf("%f\n",$3[1]);
 
    for(int i = 1; i < (size + 1);++i){
       char* prev_code = actual_code;
@@ -2055,11 +2056,11 @@ yyreduce:
    free(actual_code);
 
 }
-#line 2059 "y.tab.c"
+#line 2060 "y.tab.c"
     break;
 
   case 30: /* ID_ASSIGN: ID '=' exp  */
-#line 496 "lexical_analyzer.y"
+#line 497 "lexical_analyzer.y"
 {
 
    if(!check_variable_existence((yyvsp[-2].value),actual_scope)){
@@ -2080,30 +2081,30 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2084 "y.tab.c"
+#line 2085 "y.tab.c"
     break;
 
   case 31: /* LISTA_ARRAY: '[' LISTA_ARGS_NUM ']'  */
-#line 518 "lexical_analyzer.y"
+#line 519 "lexical_analyzer.y"
                                      {(yyval.lista_num) = (yyvsp[-1].lista_num);}
-#line 2090 "y.tab.c"
+#line 2091 "y.tab.c"
     break;
 
   case 32: /* LISTA_ARGS_NUM: LISTA_ARGS_NUM ',' NUMERO  */
-#line 523 "lexical_analyzer.y"
+#line 524 "lexical_analyzer.y"
 {
    (yyval.lista_num) = (yyvsp[-2].lista_num);
    int size = (yyval.lista_num)[0];
-   (yyval.lista_num)[size] = atof((yyvsp[0].value));
-   (yyval.lista_num)[0] = size + 1;
-   // printf("%f\n",atof($<value>3));
+   (yyval.lista_num)[size+1] = atof((yyvsp[0].value));
+   (yyval.lista_num)[0]++;
+   // printf("%f %d\n",atof($<value>3),size);
 
 }
-#line 2103 "y.tab.c"
+#line 2104 "y.tab.c"
     break;
 
   case 33: /* LISTA_ARGS_NUM: NUMERO  */
-#line 533 "lexical_analyzer.y"
+#line 534 "lexical_analyzer.y"
 {
    (yyval.lista_num) = (double*) malloc(sizeof(double)*100);
    (yyval.lista_num)[0] = 1;
@@ -2111,11 +2112,11 @@ yyreduce:
 
    // printf("%f\n",atof($<value>1));
 }
-#line 2115 "y.tab.c"
+#line 2116 "y.tab.c"
     break;
 
   case 34: /* LISTA_ARGS_PRINT: LISTA_ARGS_PRINT ',' exp  */
-#line 543 "lexical_analyzer.y"
+#line 544 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[0].nodo).code,"print_c \n");
 
@@ -2125,11 +2126,11 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2129 "y.tab.c"
+#line 2130 "y.tab.c"
     break;
 
   case 35: /* LISTA_ARGS_PRINT: LISTA_ARGS_PRINT ',' CADENA  */
-#line 554 "lexical_analyzer.y"
+#line 555 "lexical_analyzer.y"
 {
    char* temp = malloc(200);
 
@@ -2140,11 +2141,11 @@ yyreduce:
    free((yyvsp[0].value));
 
 }
-#line 2144 "y.tab.c"
+#line 2145 "y.tab.c"
     break;
 
   case 36: /* LISTA_ARGS_PRINT: CADENA  */
-#line 566 "lexical_analyzer.y"
+#line 567 "lexical_analyzer.y"
 {
    (yyval.nodo).code = malloc(200);
    sprintf((yyval.nodo).code,"print_s %s\n",(yyvsp[0].value));
@@ -2152,11 +2153,11 @@ yyreduce:
    free((yyvsp[0].value));
 
 }
-#line 2156 "y.tab.c"
+#line 2157 "y.tab.c"
     break;
 
   case 37: /* LISTA_ARGS_PRINT: exp  */
-#line 575 "lexical_analyzer.y"
+#line 576 "lexical_analyzer.y"
 {
 
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"print_c \n");
@@ -2164,29 +2165,29 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2168 "y.tab.c"
+#line 2169 "y.tab.c"
     break;
 
   case 38: /* SUB_CODE: IF_BLOCK  */
-#line 585 "lexical_analyzer.y"
+#line 586 "lexical_analyzer.y"
                    {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2174 "y.tab.c"
+#line 2175 "y.tab.c"
     break;
 
   case 39: /* SUB_CODE: IF_ELSE_BLOCK  */
-#line 585 "lexical_analyzer.y"
+#line 586 "lexical_analyzer.y"
                                                         {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2180 "y.tab.c"
+#line 2181 "y.tab.c"
     break;
 
   case 40: /* SUB_CODE: WHILE_BLOCK  */
-#line 585 "lexical_analyzer.y"
+#line 586 "lexical_analyzer.y"
                                                                                            {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2186 "y.tab.c"
+#line 2187 "y.tab.c"
     break;
 
   case 41: /* WHILE_BLOCK: WHILE '(' exp ')' P  */
-#line 590 "lexical_analyzer.y"
+#line 591 "lexical_analyzer.y"
 {
    int start_label = actual_label++;
    int end_label = actual_label++;
@@ -2214,11 +2215,11 @@ yyreduce:
    free(temp6);
 
 }
-#line 2218 "y.tab.c"
+#line 2219 "y.tab.c"
     break;
 
   case 42: /* IF_BLOCK: IF '(' exp ')' P  */
-#line 621 "lexical_analyzer.y"
+#line 622 "lexical_analyzer.y"
 {
 
    int label = actual_label++;
@@ -2244,11 +2245,11 @@ yyreduce:
    free(temp3);
    free(temp4);
 }
-#line 2248 "y.tab.c"
+#line 2249 "y.tab.c"
     break;
 
   case 43: /* IF_ELSE_BLOCK: IF '(' exp ')' P ELSE P  */
-#line 649 "lexical_analyzer.y"
+#line 650 "lexical_analyzer.y"
 {
    int label_else = actual_label++;
    int label_end = actual_label++;
@@ -2284,29 +2285,29 @@ yyreduce:
    free(temp6);
 
 }
-#line 2288 "y.tab.c"
+#line 2289 "y.tab.c"
     break;
 
   case 44: /* P: I  */
-#line 685 "lexical_analyzer.y"
+#line 686 "lexical_analyzer.y"
      {(yyval.nodo).code = (yyvsp[0].nodo).code;}
-#line 2294 "y.tab.c"
+#line 2295 "y.tab.c"
     break;
 
   case 45: /* P: '{' CODE '}'  */
-#line 685 "lexical_analyzer.y"
+#line 686 "lexical_analyzer.y"
                                          {(yyval.nodo).code = (yyvsp[-1].nodo).code;}
-#line 2300 "y.tab.c"
+#line 2301 "y.tab.c"
     break;
 
   case 46: /* P: '{' '}'  */
-#line 685 "lexical_analyzer.y"
+#line 686 "lexical_analyzer.y"
                                                                          {(yyval.nodo).code =strdup("");}
-#line 2306 "y.tab.c"
+#line 2307 "y.tab.c"
     break;
 
   case 47: /* DECL: DECL ',' ID  */
-#line 690 "lexical_analyzer.y"
+#line 691 "lexical_analyzer.y"
 {
    if(check_variable_existence((yyvsp[0].value),actual_scope)){
       char * error_string = malloc(100);
@@ -2327,11 +2328,11 @@ yyreduce:
    free(temp);
 
 }
-#line 2331 "y.tab.c"
+#line 2332 "y.tab.c"
     break;
 
   case 48: /* DECL: DECL ',' ID '[' NUMERO ']'  */
-#line 712 "lexical_analyzer.y"
+#line 713 "lexical_analyzer.y"
 {
    if(check_variable_existence((yyvsp[-3].value),actual_scope)){
       char * error_string = malloc(100);
@@ -2361,11 +2362,11 @@ yyreduce:
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 2365 "y.tab.c"
+#line 2366 "y.tab.c"
     break;
 
   case 49: /* DECL: LET ID  */
-#line 743 "lexical_analyzer.y"
+#line 744 "lexical_analyzer.y"
 {
    if(check_variable_existence((yyvsp[0].value),actual_scope)){
       char * error_string = malloc(100);
@@ -2382,11 +2383,11 @@ yyreduce:
    free((yyvsp[0].value));
    
 }
-#line 2386 "y.tab.c"
+#line 2387 "y.tab.c"
     break;
 
   case 50: /* DECL: LET ID '[' NUMERO ']'  */
-#line 761 "lexical_analyzer.y"
+#line 762 "lexical_analyzer.y"
 {
    if(check_variable_existence((yyvsp[-3].value),actual_scope)){
       char * error_string = malloc(100);
@@ -2415,11 +2416,11 @@ yyreduce:
    free((yyvsp[-3].value));
    free((yyvsp[-1].value));
 }
-#line 2419 "y.tab.c"
+#line 2420 "y.tab.c"
     break;
 
   case 51: /* exp: exp LOGIC level1  */
-#line 794 "lexical_analyzer.y"
+#line 795 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"and") == 0)
@@ -2432,21 +2433,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2436 "y.tab.c"
+#line 2437 "y.tab.c"
     break;
 
   case 52: /* exp: level1  */
-#line 808 "lexical_analyzer.y"
+#line 809 "lexical_analyzer.y"
 {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2446 "y.tab.c"
+#line 2447 "y.tab.c"
     break;
 
   case 53: /* level1: level1 COMP level2  */
-#line 817 "lexical_analyzer.y"
+#line 818 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),">=") == 0)
@@ -2466,21 +2467,21 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2470 "y.tab.c"
+#line 2471 "y.tab.c"
     break;
 
   case 54: /* level1: level2  */
-#line 837 "lexical_analyzer.y"
+#line 838 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2480 "y.tab.c"
+#line 2481 "y.tab.c"
     break;
 
   case 55: /* level2: level2 OP1 level3  */
-#line 846 "lexical_analyzer.y"
+#line 847 "lexical_analyzer.y"
 {
    char* temp = concat_strings((yyvsp[-2].nodo).code,(yyvsp[0].nodo).code);
    if(strcmp((yyvsp[-1].value),"+") == 0)
@@ -2493,21 +2494,21 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2497 "y.tab.c"
+#line 2498 "y.tab.c"
     break;
 
   case 56: /* level2: level3  */
-#line 859 "lexical_analyzer.y"
+#line 860 "lexical_analyzer.y"
        {
 
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 
 }
-#line 2507 "y.tab.c"
+#line 2508 "y.tab.c"
     break;
 
   case 57: /* level3: level3 OP2 UNARY  */
-#line 868 "lexical_analyzer.y"
+#line 869 "lexical_analyzer.y"
 {
 
 
@@ -2526,11 +2527,11 @@ yyreduce:
    free((yyvsp[-1].value));
    free((yyvsp[0].nodo).code);
 }
-#line 2530 "y.tab.c"
+#line 2531 "y.tab.c"
     break;
 
   case 58: /* level3: UNARY  */
-#line 888 "lexical_analyzer.y"
+#line 889 "lexical_analyzer.y"
 {
 
 
@@ -2541,40 +2542,40 @@ yyreduce:
    //free($1.code);
    //free($1.name);
 }
-#line 2545 "y.tab.c"
+#line 2546 "y.tab.c"
     break;
 
   case 59: /* UNARY: '!' VALUE  */
-#line 902 "lexical_analyzer.y"
+#line 903 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"ne \n");
    free((yyvsp[0].nodo).code);
 
 }
-#line 2555 "y.tab.c"
+#line 2556 "y.tab.c"
     break;
 
   case 60: /* UNARY: '-' VALUE  */
-#line 910 "lexical_analyzer.y"
+#line 911 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[0].nodo).code,"ldc -1\nmp \n");
 
    free((yyvsp[0].nodo).code);
 
 }
-#line 2566 "y.tab.c"
+#line 2567 "y.tab.c"
     break;
 
   case 61: /* UNARY: VALUE  */
-#line 918 "lexical_analyzer.y"
+#line 919 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[0].nodo).code;
 }
-#line 2574 "y.tab.c"
+#line 2575 "y.tab.c"
     break;
 
   case 62: /* VALUE: ID  */
-#line 926 "lexical_analyzer.y"
+#line 927 "lexical_analyzer.y"
 {
    if(!check_variable_existence((yyvsp[0].value),actual_scope)){
       char* error_string = malloc(100);
@@ -2588,11 +2589,11 @@ yyreduce:
    //$$.name = $<value>1;
    //printf("%s\n",$$.name);
 }
-#line 2592 "y.tab.c"
+#line 2593 "y.tab.c"
     break;
 
   case 63: /* VALUE: ID '[' NUM_LIKE ']'  */
-#line 943 "lexical_analyzer.y"
+#line 944 "lexical_analyzer.y"
 {
    if(!check_variable_existence((yyvsp[-3].value),actual_scope)){
       char* error_string = malloc(100);
@@ -2609,11 +2610,11 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 2613 "y.tab.c"
+#line 2614 "y.tab.c"
     break;
 
   case 64: /* VALUE: ID '(' LISTA_ARGS_CALL ')'  */
-#line 961 "lexical_analyzer.y"
+#line 962 "lexical_analyzer.y"
 {
    if(is_valid_call((yyvsp[-3].value),(yyvsp[-1].nodo).count) == 0){
       char* error_string  = malloc(100);
@@ -2636,37 +2637,37 @@ yyreduce:
    free((yyvsp[-1].nodo).code);
 
 }
-#line 2640 "y.tab.c"
+#line 2641 "y.tab.c"
     break;
 
   case 65: /* VALUE: CEIL '(' exp ')'  */
-#line 985 "lexical_analyzer.y"
+#line 986 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,"ceil \n");
 
 }
-#line 2649 "y.tab.c"
+#line 2650 "y.tab.c"
     break;
 
   case 66: /* VALUE: FLOOR '(' exp ')'  */
-#line 991 "lexical_analyzer.y"
+#line 992 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings((yyvsp[-1].nodo).code,"floor \n");
 
 }
-#line 2658 "y.tab.c"
+#line 2659 "y.tab.c"
     break;
 
   case 67: /* VALUE: '(' exp ')'  */
-#line 997 "lexical_analyzer.y"
+#line 998 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (yyvsp[-1].nodo).code;
 }
-#line 2666 "y.tab.c"
+#line 2667 "y.tab.c"
     break;
 
   case 68: /* VALUE: NUMERO  */
-#line 1003 "lexical_analyzer.y"
+#line 1004 "lexical_analyzer.y"
 {
    (yyval.nodo).code = (char*) malloc(60);
    sprintf((yyval.nodo).code,"ldc %s\n",(yyvsp[0].value));
@@ -2674,11 +2675,11 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2678 "y.tab.c"
+#line 2679 "y.tab.c"
     break;
 
   case 69: /* LISTA_ARGS_CALL: LISTA_ARGS_CALL ',' exp  */
-#line 1014 "lexical_analyzer.y"
+#line 1015 "lexical_analyzer.y"
 {
    char* temp = concat_strings("lda $\n",(yyvsp[0].nodo).code);
 
@@ -2689,11 +2690,11 @@ yyreduce:
    free(temp);
    free((yyvsp[0].nodo).code);
 }
-#line 2693 "y.tab.c"
+#line 2694 "y.tab.c"
     break;
 
   case 70: /* LISTA_ARGS_CALL: exp  */
-#line 1026 "lexical_analyzer.y"
+#line 1027 "lexical_analyzer.y"
 {
    (yyval.nodo).code = concat_strings("lda $\n",(yyvsp[0].nodo).code);
    (yyval.nodo).count = 1;
@@ -2701,21 +2702,21 @@ yyreduce:
    free((yyvsp[0].nodo).code);
 
 }
-#line 2705 "y.tab.c"
+#line 2706 "y.tab.c"
     break;
 
   case 71: /* LISTA_ARGS_CALL: %empty  */
-#line 1036 "lexical_analyzer.y"
+#line 1037 "lexical_analyzer.y"
 {
    (yyval.nodo).code = strdup("");
    (yyval.nodo).count = 0;
 
 }
-#line 2715 "y.tab.c"
+#line 2716 "y.tab.c"
     break;
 
   case 72: /* NUM_LIKE: ID  */
-#line 1045 "lexical_analyzer.y"
+#line 1046 "lexical_analyzer.y"
 {
 
    if(!check_variable_existence((yyvsp[0].value),actual_scope)){
@@ -2729,11 +2730,11 @@ yyreduce:
    sprintf((yyval.nodo).code,"lod %s\n",(yyvsp[0].value));
    free((yyvsp[0].value));
 }
-#line 2733 "y.tab.c"
+#line 2734 "y.tab.c"
     break;
 
   case 73: /* NUM_LIKE: NUMERO  */
-#line 1060 "lexical_analyzer.y"
+#line 1061 "lexical_analyzer.y"
 { 
    double num_d = atof((yyvsp[0].value));
    int num_i = atoi((yyvsp[0].value));
@@ -2751,53 +2752,53 @@ yyreduce:
    //$$.code = strdup("");
    //$$.name = $<value>1;
 }
-#line 2755 "y.tab.c"
+#line 2756 "y.tab.c"
     break;
 
   case 74: /* LOGIC: AND  */
-#line 1078 "lexical_analyzer.y"
+#line 1079 "lexical_analyzer.y"
            {(yyval.value) = (yyvsp[0].value);}
-#line 2761 "y.tab.c"
+#line 2762 "y.tab.c"
     break;
 
   case 75: /* LOGIC: OR  */
-#line 1078 "lexical_analyzer.y"
+#line 1079 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2767 "y.tab.c"
+#line 2768 "y.tab.c"
     break;
 
   case 76: /* OP1: '+'  */
-#line 1079 "lexical_analyzer.y"
+#line 1080 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2773 "y.tab.c"
+#line 2774 "y.tab.c"
     break;
 
   case 77: /* OP1: '-'  */
-#line 1079 "lexical_analyzer.y"
+#line 1080 "lexical_analyzer.y"
                                   {(yyval.value) = (yyvsp[0].value);}
-#line 2779 "y.tab.c"
+#line 2780 "y.tab.c"
     break;
 
   case 78: /* OP2: '*'  */
-#line 1080 "lexical_analyzer.y"
+#line 1081 "lexical_analyzer.y"
          {(yyval.value) = (yyvsp[0].value);}
-#line 2785 "y.tab.c"
+#line 2786 "y.tab.c"
     break;
 
   case 79: /* OP2: '/'  */
-#line 1080 "lexical_analyzer.y"
+#line 1081 "lexical_analyzer.y"
                                  {(yyval.value) = (yyvsp[0].value);}
-#line 2791 "y.tab.c"
+#line 2792 "y.tab.c"
     break;
 
   case 80: /* OP2: '%'  */
-#line 1080 "lexical_analyzer.y"
+#line 1081 "lexical_analyzer.y"
                                                         {(yyval.value) = (yyvsp[0].value);}
-#line 2797 "y.tab.c"
+#line 2798 "y.tab.c"
     break;
 
 
-#line 2801 "y.tab.c"
+#line 2802 "y.tab.c"
 
       default: break;
     }
@@ -3021,7 +3022,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1082 "lexical_analyzer.y"
+#line 1083 "lexical_analyzer.y"
 
 
 
