@@ -51,6 +51,7 @@
     ls lista;
     node nodo;
     char* value;
+    double* lista_num;
 
 }
 
@@ -59,7 +60,8 @@
 %type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
 %type<nodo> FUNCT_MAIN FUNCT_DEF FUNCT_DEFS UNARY
-%type<nodo> LISTA_ARGS_DEF LISTA_ARGS_CALL
+%type<nodo> LISTA_ARGS_DEF LISTA_ARGS_CALL ID_ASSIGN
+%type<lista_num> LISTA_ARRAY LISTA_ARGS_NUM
 %define parse.error detailed
 
 %right "then" ELSE
@@ -244,30 +246,7 @@ SUB_CODE
 
 IN: 
  
-ID 
-{
-      if(!check_symbol_existence($<value>1)) {
-         yyerror("Variable does not exists");
-         YYERROR;
-      }
-} 
-'=' exp 
-{
-   char* temp1 = (char*) malloc(100);
-   sprintf(temp1,"lda %s\n",$<value>1);
-                                    //es $4 porque cuando se pone acciones
-                                    //en el medio (lo que esta a la derecha de ID)
-                                    //eso cuenta como si fuera un symbolo mas
-   char* temp2 = concat_strings(temp1,$4.code);
-
-   $$.code = concat_strings(temp2,"sto \n");
-
-   free(temp1);
-   free(temp2);
-   free($<value>1);
-   free($<value>3);
-   free($4.code);
-} |
+ID_ASSIGN {$$.code = $1.code;} |
 
 ID 
 {
@@ -331,6 +310,78 @@ RETURN exp {
 
 %empty {
    $$.code = strdup("");
+};
+
+ID_ASSIGN: 
+
+ID '=' LISTA_ARRAY 
+{
+   char* actual_code = strdup("");
+   int size = $3[0];
+
+   for(int i = 1; i < (size + 1);++i){
+      char* prev_code = actual_code;
+      char* temp = malloc(300);
+      double actual_num = $3[i];
+      // printf("%f\n",actual_num);
+      sprintf(temp,"lod %s\nldc %d\nad \nldc %f\nsto \n",$<value>1,i-1,actual_num);
+
+      actual_code = concat_strings(prev_code,temp);
+
+      free(prev_code);
+      free(temp);
+
+
+   }
+   char* temp = malloc(100);
+   sprintf(temp,"lda %s\nnew_arr %d\nsto \n",$<value>1,size);
+
+   $$.code = concat_strings(temp,actual_code);
+
+   free($<value>1);
+   free($3);
+   free(temp);
+   free(actual_code);
+
+} | 
+
+ID '=' exp 
+{
+   char* temp1 = (char*) malloc(100);
+   sprintf(temp1,"lda %s\n",$<value>1);
+   char* temp2 = concat_strings(temp1,$3.code);
+
+   $$.code = concat_strings(temp2,"sto \n");
+
+   free(temp1);
+   free(temp2);
+   free($<value>1);
+   free($<value>2);
+   free($3.code);
+};
+
+
+LISTA_ARRAY: '[' LISTA_ARGS_NUM ']'  {$$ = $2;};
+
+LISTA_ARGS_NUM: 
+
+LISTA_ARGS_NUM ',' NUMERO 
+{
+   $$ = $1;
+   int size = $$[0];
+   $$[size] = atof($<value>3);
+   $$[0] = size + 1;
+   // printf("%f\n",atof($<value>3));
+
+} |
+
+NUMERO 
+{
+   $$ = (double*) malloc(sizeof(double)*100);
+   $$[0] = 1;
+   $$[1] = atof($<value>1);
+
+   // printf("%f\n",atof($<value>1));
 };
 
 LISTA_ARGS_PRINT: 
@@ -750,6 +801,18 @@ ID '(' LISTA_ARGS_CALL ')'
 
    free(temp);
    free($3.code);
+
+} |
+
+CEIL '(' exp ')' 
+{
+   $$.code = concat_strings($3.code,"ceil \n");
+
+} |
+
+FLOOR '(' exp ')' 
+{
+   $$.code = concat_strings($3.code,"floor \n");
 
 } |
 

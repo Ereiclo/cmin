@@ -52,7 +52,7 @@ id [a-zA-Z]+[a-z0-9A-Z]*
 nada [ \t\n\r]
 comentario ("/*"([^*]|{nada})*"*/")|("//".*)
 fin_inst ";"
-numero ([0-9]+("."[0-9]*){0,1})|"-"{0,1}("."[0-9]+)
+numero ([0-9]+("."[0-9]*){0,1})|("."[0-9]+)|inf
 par_abierto "("
 par_cerrado ")"
 llave_abierta "{"
@@ -211,6 +211,14 @@ print_keyword print
 {fin_inst} {
     return ';';
 }
+
+{numero} {
+    
+
+    //valor del numero
+    yylval.value = strdup(yytext);
+    return NUMERO;
+}
 {id} {
     //guardar valor del id
 
@@ -232,13 +240,7 @@ print_keyword print
 
     return CADENA;
 }
-{numero} {
-    
 
-    //valor del numero
-    yylval.value = strdup(yytext);
-    return NUMERO;
-}
 
 {negate} {
 

@@ -2,33 +2,86 @@ lab $main
 scope 
 new_var a
 new_var b
-new_var c
-lda c
-lda $
-lod a
-ldc 3
-equi 
-ne 
-lda $
-lod b
-call_jp $hola
-ne 
-sto 
-lda b
-lod a
-ne 
-sto 
+new_var i
+new_var n
 lda a
-ldc 0
-ne 
+new_arr 6
 sto 
-lda b
+lod a
+ldc 0
+ad 
+ldc 34.000000
+sto 
+lod a
+ldc 1
+ad 
+ldc 5.000000
+sto 
+lod a
+ldc 2
+ad 
+ldc 7.000000
+sto 
 lod a
 ldc 3
+ad 
+ldc 8.000000
+sto 
+lod a
+ldc 4
+ad 
+ldc 9.000000
+sto 
+lod a
+ldc 5
+ad 
+ldc 0.000000
+sto 
+lda n
+ldc 5
+sto 
+lda i
+ldc 0
+sto 
+lab L0
+lod i
+lod n
 le 
 ne 
-ldc 34
-land 
-ne 
+tjp L1
+lod a
+lod i
+ad 
+loa 
+print_c 
+print_s  
+lda i
+lod i
+ldc 1
+ad 
 sto 
+ujp L0
+lab L1
+print_s \n
+ldc 5
+ldc 2
+dv 
+floor 
+print_c 
+print_s \n
+ldc 3.55
+ceil 
+ldc 5.5
+ad 
+print_c 
+print_s \n
+lda b
+ldc inf
+ldc -1
+mp 
+sto 
+ldc 0
+lod b
+ge 
+print_c 
 endscope 

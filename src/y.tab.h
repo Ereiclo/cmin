@@ -105,9 +105,10 @@ union YYSTYPE
     ls lista;
     node nodo;
     char* value;
+    double* lista_num;
 
 
-#line 111 "y.tab.h"
+#line 112 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
