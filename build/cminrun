@@ -126,6 +126,11 @@ def equi(value,stack,call_stack,memory,variable_table):
 
     stack.append(first == second)
 
+def nequi(value,stack,call_stack,memory,variable_table):
+    second = stack.pop()
+    first = stack.pop()
+
+    stack.append(first != second)
 
 
 def ad(value,stack,call_stack,memory,variable_table):
@@ -210,6 +215,7 @@ operations = {
               'tjp':tjp,
               'print_s':print_s,
               'print_c':print_c,
+              'nequi':nequi,
               'geq':geq,
               'leq':leq,
               'land':land,

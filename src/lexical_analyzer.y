@@ -79,10 +79,10 @@
 }
 
 
-%type<value> OP1 OP2 LOGIC 
-%type<nodo> exp level1 level2 level3 CODE IN I LISTA_ARGS_PRINT
+%type<value> OP1 OP2 
+%type<nodo> exp level1 level2 level3 ANDLEVEL CODE IN I LISTA_ARGS_PRINT
 %type<nodo> VALUE DECL NUM_LIKE SUB_CODE IF_BLOCK IF_ELSE_BLOCK P WHILE_BLOCK
-%type<nodo> FUNCT_MAIN FUNCT_DEF FUNCT_DEFS UNARY
+%type<nodo> FUNCT_MAIN FUNCT_DEF FUNCT_DEFS UNARY 
 %type<nodo> LISTA_ARGS_DEF LISTA_ARGS_CALL ID_ASSIGN
 %type<lista_num> LISTA_ARRAY LISTA_ARGS_NUM
 %define parse.error detailed
@@ -791,27 +791,39 @@ LET ID '[' NUMERO ']'
 
 exp:
 
-exp LOGIC level1 
+exp OR ANDLEVEL 
 {
    char* temp = concat_strings($1.code,$3.code);
-   if(strcmp($2,"and") == 0)
-      $$.code = concat_strings(temp,"land \n");
-   else if(strcmp($2,"or") == 0)
-      $$.code = concat_strings(temp,"lor \n");
+   $$.code = concat_strings(temp,"lor \n");
 
    free(temp);
    free($1.code);
-   free($2);
+   free($<value>2);
    free($3.code);
 } |
 
-level1 
+ANDLEVEL 
 {
 
    $$.code = $1.code;
 
 };
 
+ANDLEVEL: ANDLEVEL AND level1 
+{
+   char* temp = concat_strings($1.code,$3.code);
+   $$.code = concat_strings(temp,"land \n");
+
+   free(temp);
+   free($1.code);
+   free($<value>2);
+   free($3.code);
+
+}| 
+level1
+{
+   $$.code = $1.code;
+};
 level1: 
 
 level1 COMP level2 
@@ -827,6 +839,8 @@ level1 COMP level2
       $$.code = concat_strings(temp,"ge \n");
    else if(strcmp($<value>2,"==") == 0)
       $$.code = concat_strings(temp,"equi \n");
+   else if(strcmp($<value>2,"!=") == 0)
+      $$.code = concat_strings(temp,"nequi \n");
 
    free(temp);
    free($1.code);
@@ -1076,7 +1090,6 @@ NUMERO
    //$$.name = $<value>1;
 };
 
-LOGIC: AND {$$ = $<value>1;} | OR {$$ = $<value>1;};
 OP1: '+' {$$ = $<value>1;} | '-'  {$$ = $<value>1;};
 OP2: '*' {$$ = $<value>1;} | '/' {$$ = $<value>1;} |'%' {$$ = $<value>1;};
 
