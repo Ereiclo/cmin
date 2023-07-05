@@ -50,7 +50,7 @@
 
 id [a-zA-Z]+[a-z0-9A-Z]*
 nada [ \t\n\r]
-comentario ("/*"([^*]|{nada})*"*/")|("//".*)
+comentario ("/*"([^/]|{nada})*"*/")|("//".*)
 fin_inst ";"
 numero ([0-9]+("."[0-9]*){0,1})|("."[0-9]+)|inf
 par_abierto "("
@@ -90,6 +90,11 @@ print_keyword print
 
 
 %%
+
+{comentario} {
+
+}
+
 
 {main_keyword} {
     return MAIN;
@@ -226,10 +231,6 @@ print_keyword print
 
     return ID;
 }
-{comentario} {
-
-}
-
 {cadena} {
     
     //valor de la cadena (quitando comillas)

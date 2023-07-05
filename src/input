@@ -1,110 +1,51 @@
+function main(){
+    // let a,b;
 
-function mergeSort(array,A,B,l,r);
-function copyArray(array,copy,l,r);
-function merge(array,A,B,l,r); //merge in place
+    // a = 5;
+    // b = 7;
 
-function printArray(array,n);
-
-function printArray(array,n){
-    let i;
-    i = 0;
-
-    while(i < n){
-        print(array[i]," ");
-        i = i + 1;
-    }
-}
-
-function merge(array,A,B,l,r){ 
-    let k;
-    let i;
-    let j;
-
-    k = l;
-    i = 0;
-    j = 0;
-
-    while(k < r){
-
-        if(A[i] <= B[j]){
-            array[k] = A[i];
-            i = i + 1;
-
-        }else{
-            array[k] = B[j];
-            j = j + 1;
-        }
-
-        k = k + 1;
-    }
+    print("El valor de a + b es ,a+b);
 
 }
 
 
-function copyArray(array,copy,l,r){
+/*function pow(a,b);
+function powRec(a,b);
+function programa();
 
-    let i,k; 
-    i = l;
-    k = 0;
+function pow(a,b){
 
-    while(i < r){
-        copy[k] = array[i];
+    let result;
 
-        k = k + 1;
-        i = i + 1;
+    result = 1;
 
+    while(b > 0){
+
+        result = result * a;
+
+        b = b - 1;
     }
 
+
+
+    return result;
 }
 
-function mergeSort(array,A,B,l,r){
+function powRec(a,b){
+    if(b == 0) return 1;
 
-    if(l == r-1 ){
-        return 0;
-    }
-
-    let mid,sizeA;
-
-    mid = floor((r + l -1)/2);
-
-    
-
-    mergeSort(array,A,B,l,mid+1);
-    mergeSort(array,A,B,mid+1,r);
-
-    // print(l," ",r-1," ",mid,"\n");
-
-    copyArray(array,A,l,mid+1);
-    copyArray(array,B,mid+1,r);
-
-    sizeA = mid - l + 1;
-
-    A[sizeA] = inf;
-    B[sizeA] = inf;
-
-    merge(array,A,B,l,r);
-
-    // print(l,r,"\n");
+    return a*powRec(a,b-1);
 }
 
+function programa(){
+    print("El resultado de 8**3 es: ",pow(8.5,3),"\n");
+    print("El resultado de 8**3 es: ",ceil(powRec(8.5,3)));
+}
 
 
 function main(){
-    let n;
-    n = 16;
 
-    let array;
-    let A[17],B[17];
-                                    //
-                 //              
-    array = [63,58,11,69,42,3,78,60,59,81,7,82,65,25,33,32];
+    programa();
 
 
-    printArray(array,n);
-    mergeSort(array,A,B,0,n);
-
-    print("\n");
-
-    printArray(array,n);
-
-}
+}*/

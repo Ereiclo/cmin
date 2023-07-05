@@ -1,40 +1,14 @@
-function pow(a,b);
-function powRec(a,b);
-function programa();
+function f(a,b);
+function c();
 
-function pow(a,b){
+function f(a,b){
 
-    let result;
-
-    result = 1;
-
-    while(b > 0){
-
-        result = result * a;
-
-        b = b - 1;
-    }
-
-
-
-    return result;
-}
-
-function powRec(a,b){
-    if(b == 0) return 1;
-
-    return a*powRec(a,b-1);
-}
-
-function programa(){
-    print("El resultado de 8**3 es: ",pow(8.5,3),"\n");
-    print("El resultado de 8**3 es: ",ceil(powRec(8.5,3)));
 }
 
 
 function main(){
+    let a,b;//comentario
 
-    programa();
-
+    f(a,b);
 
 }

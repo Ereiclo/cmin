@@ -1,27 +1,89 @@
 ujp $main
-lab $printArray
+lab $factorial
 scope 
 sto 
-new_var n
-lda n
+new_var x
+lda x
 lod $
 sto 
+new_var y
+lda y
+ldc 1
 sto 
-new_var array
-lda array
-lod $
+lab L0
+lod x
+ldc 0
+ge 
+ne 
+tjp L1
+lda y
+lod y
+lod x
+mp 
 sto 
+lda x
+lod x
+ldc 1
+sb 
+sto 
+ujp L0
+lab L1
+lod y
+endscope 
+return_jp 
+ldc 0
+endscope 
+return_jp 
+lab $main
+scope 
+new_var a
+lda a
+new_arr 5
+sto 
+new_var arr
 new_var i
+new_var j
+lda arr
+new_arr 4
+sto 
+lod arr
+ldc 0
+ad 
+ldc 2.000000
+sto 
+lod arr
+ldc 1
+ad 
+ldc 3.000000
+sto 
+lod arr
+ldc 2
+ad 
+ldc 5.000000
+sto 
+lod arr
+ldc 3
+ad 
+ldc 15.000000
+sto 
 lda i
 ldc 0
 sto 
-lab L0
+lab L2
 lod i
-lod n
+ldc 5
 le 
 ne 
-tjp L1
-lod array
+tjp L3
+lod a
+lod i
+ad 
+lod i
+sto 
+lod i
+print_c 
+print_s  
+lod a
 lod i
 ad 
 loa 
@@ -32,420 +94,59 @@ lod i
 ldc 1
 ad 
 sto 
-ujp L0
-lab L1
-ldc 0
-endscope 
-return_jp 
-lab $merge
-scope 
-sto 
-new_var r
-lda r
-lod $
-sto 
-sto 
-new_var l
-lda l
-lod $
-sto 
-sto 
-new_var B
-lda B
-lod $
-sto 
-sto 
-new_var A
-lda A
-lod $
-sto 
-sto 
-new_var array
-lda array
-lod $
-sto 
-new_var k
-new_var i
-new_var j
-lda k
-lod l
-sto 
-lda i
-ldc 0
-sto 
-lda j
-ldc 0
-sto 
-lab L4
-lod k
-lod r
-le 
-ne 
-tjp L5
-lod A
-lod i
-ad 
-loa 
-lod B
-lod j
-ad 
-loa 
-leq 
-ne 
-tjp L2
-lod array
-lod k
-ad 
-lod A
-lod i
-ad 
-loa 
-sto 
-lda i
-lod i
-ldc 1
-ad 
-sto 
-ujp L3
-lab L2
-lod array
-lod k
-ad 
-lod B
-lod j
-ad 
-loa 
-sto 
-lda j
-lod j
-ldc 1
-ad 
-sto 
+ujp L2
 lab L3
-lda k
-lod k
-ldc 1
-ad 
-sto 
-ujp L4
-lab L5
-ldc 0
-endscope 
-return_jp 
-lab $copyArray
-scope 
-sto 
-new_var r
-lda r
-lod $
-sto 
-sto 
-new_var l
-lda l
-lod $
-sto 
-sto 
-new_var copy
-lda copy
-lod $
-sto 
-sto 
-new_var array
-lda array
-lod $
-sto 
-new_var i
-new_var k
-lda i
-lod l
-sto 
-lda k
+print_s \n
+lda j
 ldc 0
 sto 
-lab L6
-lod i
-lod r
-le 
-ne 
-tjp L7
-lod copy
-lod k
-ad 
-lod array
-lod i
-ad 
-loa 
-sto 
-lda k
-lod k
-ldc 1
-ad 
-sto 
-lda i
-lod i
-ldc 1
-ad 
-sto 
-ujp L6
 lab L7
-ldc 0
-endscope 
-return_jp 
-lab $mergeSort
-scope 
-sto 
-new_var r
-lda r
-lod $
-sto 
-sto 
-new_var l
-lda l
-lod $
-sto 
-sto 
-new_var B
-lda B
-lod $
-sto 
-sto 
-new_var A
-lda A
-lod $
-sto 
-sto 
-new_var array
-lda array
-lod $
-sto 
-lod l
-lod r
-ldc 1
-sb 
-equi 
+lod j
+ldc 4
+le 
 ne 
 tjp L8
-ldc 0
-endscope 
-return_jp 
-lab L8
-new_var mid
-new_var sizeA
-lda mid
-lod r
-lod l
+lod arr
+lod j
 ad 
-ldc 1
-sb 
-ldc 2
-dv 
-floor 
-sto 
-lda $
-lod array
-lda $
-lod A
-lda $
-lod B
-lda $
-lod l
-lda $
-lod mid
-ldc 1
-ad 
-call_jp $mergeSort
-pop 
-lda $
-lod array
-lda $
-lod A
-lda $
-lod B
-lda $
-lod mid
-ldc 1
-ad 
-lda $
-lod r
-call_jp $mergeSort
-pop 
-lda $
-lod array
-lda $
-lod A
-lda $
-lod l
-lda $
-lod mid
-ldc 1
-ad 
-call_jp $copyArray
-pop 
-lda $
-lod array
-lda $
-lod B
-lda $
-lod mid
-ldc 1
-ad 
-lda $
-lod r
-call_jp $copyArray
-pop 
-lda sizeA
-lod mid
-lod l
-sb 
-ldc 1
-ad 
-sto 
-lod A
-lod sizeA
-ad 
-ldc inf
-sto 
-lod B
-lod sizeA
-ad 
-ldc inf
-sto 
-lda $
-lod array
-lda $
-lod A
-lda $
-lod B
-lda $
-lod l
-lda $
-lod r
-call_jp $merge
-pop 
-ldc 0
-endscope 
-return_jp 
-lab $main
-scope 
-new_var n
-lda n
-ldc 16
-sto 
-new_var array
-new_var A
-lda A
-new_arr 17
-sto 
-new_var B
-lda B
-new_arr 17
-sto 
-lda array
-new_arr 16
-sto 
-lod array
-ldc 0
-ad 
-ldc 63.000000
-sto 
-lod array
-ldc 1
-ad 
-ldc 21385170.000000
-sto 
-lod array
-ldc 2
-ad 
-ldc 11.000000
-sto 
-lod array
-ldc 3
-ad 
-ldc 69.000000
-sto 
-lod array
-ldc 4
-ad 
-ldc 42.000000
-sto 
-lod array
-ldc 5
-ad 
-ldc 3.000000
-sto 
-lod array
-ldc 6
-ad 
-ldc 78.000000
-sto 
-lod array
-ldc 7
-ad 
-ldc 60.000000
-sto 
-lod array
-ldc 8
-ad 
-ldc 59.000000
-sto 
-lod array
-ldc 9
-ad 
-ldc 81.000000
-sto 
-lod array
+loa 
 ldc 10
+le 
+ne 
+tjp L4
+print_s El factorial de 
+lod arr
+lod j
 ad 
-ldc 7.000000
-sto 
-lod array
-ldc 11
+loa 
+print_c 
+print_s  es 
+lda $
+lod arr
+lod j
 ad 
-ldc 82.000000
-sto 
-lod array
-ldc 12
-ad 
-ldc 65.000000
-sto 
-lod array
-ldc 13
-ad 
-ldc 25.000000
-sto 
-lod array
-ldc 14
-ad 
-ldc 33.000000
-sto 
-lod array
-ldc 15
-ad 
-ldc 32.000000
-sto 
-lda $
-lod array
-lda $
-lod n
-call_jp $printArray
-pop 
-lda $
-lod array
-lda $
-lod A
-lda $
-lod B
-lda $
-ldc 0
-lda $
-lod n
-call_jp $mergeSort
-pop 
+loa 
+call_jp $factorial
+print_c 
 print_s \n
-lda $
-lod array
-lda $
-lod n
-call_jp $printArray
-pop 
+lab L4
+lod j
+ldc 2
+mod 
+ldc 0
+equi 
+ne 
+tjp L5
+print_s Múltiplo de 2\n
+ujp L6
+lab L5
+print_s No es multiplo de 2\n
+lab L6
+lda j
+lod j
+ldc 1
+ad 
+sto 
+ujp L7
+lab L8
 endscope 

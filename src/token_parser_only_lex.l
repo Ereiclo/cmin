@@ -1,57 +1,58 @@
 %{
-    #include <stdio.h>
-    #include <string.h>
-    #include "y.tab.h"
+	#include <stdio.h>
+	#include <string.h>
+	#include "y.tab.h"
 
-    char **split_by_commas(char *s)
-    {
-        int length = strlen(s);
-        char **string_array = (char **)malloc(sizeof(char *) * length + 1);
-        int actual_length = 0;
-        char *temp_buffer = (char *)malloc(sizeof(char) * length + 1);
+	char **split_by_commas(char *s)
+	{
+		int length = strlen(s);
+		char **string_array = (char **)malloc(sizeof(char *) * length + 1);
+		int actual_length = 0;
+		char *temp_buffer = (char *)malloc(sizeof(char) * length + 1);
 
-        for (int i = 0, j = 0; i <= length; ++i)
-        {
-            if (s[i] == ',' || s[i] == '\0')
-            {
-                temp_buffer[j] = '\0';
-                string_array[actual_length++] = strdup(temp_buffer);
-                j = 0;
-            }
-            else
-            {
-                temp_buffer[j++] = s[i];
-            }
-        }
+		for (int i = 0, j = 0; i <= length; ++i)
+		{
+			if (s[i] == ',' || s[i] == '\0')
+			{
+				temp_buffer[j] = '\0';
+				string_array[actual_length++] = strdup(temp_buffer);
+				j = 0;
+			}
+			else
+			{
+				temp_buffer[j++] = s[i];
+			}
+		}
 
-        free(temp_buffer);
+		free(temp_buffer);
 
-        string_array[actual_length] = NULL;
+		string_array[actual_length] = NULL;
 
 
-        return string_array;
-    }
+		return string_array;
+	}
 
-    void remove_spaces(char* s) {
-            char* d = s;
-            do {
-                while (*d == ' ' || *d  == '\t' || *d == '\n' || *d == '\r') {
-                    ++d;
-                }
-            } while (*s++ = *d++);
-    }
+	void remove_spaces(char* s) {
+			char* d = s;
+			do {
+				while (*d == ' ' || *d  == '\t' || *d == '\n' || *d == '\r') {
+					++d;
+				}
+			} while (*s++ = *d++);
+	}
 
 
 
 %}
 
 %option noyywrap
+%option yylineno
 
 id [a-zA-Z]+[a-z0-9A-Z]*
 nada [ \t\n\r]
-comentario ("/*"([^*]|{nada})*"*/")|("//".*)
+comentario ("/*"([^/]|{nada})*"*/")|("//".*)
 fin_inst ";"
-numero "-"{0,1}([0-9]+("."[0-9]*){0,1})|"-"{0,1}("."[0-9]+)
+numero ([0-9]+("."[0-9]*){0,1})|("."[0-9]+)|inf
 par_abierto "("
 par_cerrado ")"
 llave_abierta "{"
@@ -63,6 +64,7 @@ ceil_keyword ceil
 floor_keyword floor
 let_keyword let
 return_keyword return
+main_keyword "main"
 while_keyword while
 if_keyword if
 else_keyword else 
@@ -72,10 +74,14 @@ igual "="
 mult "*"
 resta "-"
 suma "+"
-comp ">="|"<="|"<"|">"|"=="
+mod "%"
+div "/"
+comp ">="|"<="|"<"|">"|"=="|"!="
 and "&&"
 or "||"
 cadena \"([^"]|{nada})*\"
+negate "!"
+print_keyword print
 
 
 
@@ -85,123 +91,169 @@ cadena \"([^"]|{nada})*\"
 
 %%
 
+
+{comentario} {}
+
+
+
+{main_keyword} {
+}
+
+
+{print_keyword} {
+	printf("%s",yytext);
+}
 
 {return_keyword} {
-    printf("return keyword\n");
-    // return 258;
+	
+
+	printf("%s",yytext);
 }
 {funct_keyword} {
-    printf("function keyword\n");
-    // return FUNCTION;
+	
+	printf("%s",yytext);
 }
 {par_abierto} {
-    printf("parentesis abierto\n");
-    // return PAR_ABIERTO;
+	
+	printf("%s",yytext);
 }
 {par_cerrado} {
-    printf("parentesis cerrado\n");
-    // return PAR_CERRADO;
+	
+	printf("%s",yytext);
 }
 {llave_abierta} {
-    printf("llave abierta\n");
-    // return LLAVE_ABIERTA;
+	
+	printf("%s",yytext);
 }
 {llave_cerrada} {
-    printf("llave cerrada\n");
-    // return LLAVE_CERRADA;
+	
+	printf("%s",yytext);
 }
+{cor_abierto} {
+	
+	printf("%s",yytext);
+}
+{cor_cerrado} {
+	
+	printf("%s",yytext);
+}
+
 {suma} {
-    printf("encontro suma\n");
-    // return SUMA;
+	
+	yylval.value = strdup("+");
+
+	printf("%s",yytext);
 }
 {coma} {
-    printf("encontro coma\n");
-    // return COMA;
+	
+	printf("%s",yytext);
 }
 {igual} {
-    printf("encontro igual\n");
-    // return IGUAL;
+	
+	yylval.value = strdup("=");
+	printf("%s",yytext);
 }
 {mult} {
-    printf("encontro mult\n");
-    // return MULT;
+	
+
+	yylval.value = strdup("*");
+	printf("%s",yytext);
+}
+{div} {
+	
+	yylval.value = strdup("/");
+	printf("%s",yytext);
 }
 {resta} {
-    printf("encontro resta\n");
-    // return RESTA;
+	
+	yylval.value = strdup("-");
+	printf("%s",yytext);
+}
+{mod} {
+	
+	yylval.value = strdup("%");
+	printf("%s",yytext);
 }
 {and} {
-    printf("encontro and\n");
-    // return AND;
+	
+	yylval.value = strdup("and");
+	printf("%s",yytext);
 }
 {or} {
-    printf("encontro or\n");
-    // return OR;
+	
+	yylval.value = strdup("or");
+	printf("%s",yytext);
 }
 {ceil_keyword} {
-    printf("encontro ceil built-in\n");
-    // return CEIL;
+	
+	printf("%s",yytext);
 }
-{floor_keyword} {printf("encontro floor built-in\n");
-    // return FLOOR;
+{floor_keyword} {
+	printf("%s",yytext);
 }
 {let_keyword} {
-    printf("encontro let\n");
-    // return LET;
+	
+	printf("%s",yytext);
 }
 {while_keyword} {
-    printf("encontro while\n");
-    // return WHILE;
+	
+	printf("%s",yytext);
 }
 {if_keyword} {
-    printf("encontro if\n");
-    // return IF;
+	
+	printf("%s",yytext);
 }
 {else_keyword} {
-    printf("encontro else\n");
-    // return ELSE;
+	printf("%s",yytext);
 }
 {comp} {
-    printf("encontro comp operator: %s\n",yytext);
-    //tipo de comp
+	//tipo de comp
+	yylval.value = strdup(yytext);
 
-    // return COMP;
+	printf("%s",yytext);
 }
 {fin_inst} {
-    printf("fin instruccion\n");
-    // return FIN;
+	printf("%s",yytext);
+}
+
+{numero} {
+	
+
+	//valor del numero
+	yylval.value = strdup(yytext);
+	printf("%s",yytext);
 }
 {id} {
-    printf("id: %s\n",yytext);
-    //guardar valor del id
+	//guardar valor del id
 
-    // return ID;
-}
-{comentario} {
-    printf("comentario: %s\n",yytext);
-}
-{lista_args} {
-    char* cleaned = strdup(yytext);
-    // remove_spaces(cleaned);
-    printf("lista argumentos: %s\n",yytext);
+	yylval.value = strdup(yytext);
 
-
-    // return LISTA_ARGS;
+	printf("%s",yytext);
 }
 {cadena} {
-    printf("cadena: %s\n",yytext);
-    //valor de la cadena
-    // return CADENA;
-}
-{numero} {
-    printf("numero: %s\n",yytext);
+	
+	//valor de la cadena (quitando comillas)
+	int length = strlen(yytext);
+	yylval.value = malloc( length - 1 );
+	memcpy(yylval.value,&yytext[1],length-2);
+	yylval.value[length-2] = '\0';
 
-    //valor del numero
-    // return NUMERO;
+	printf("empezo%stermino\n",yytext);
 }
+
+
+{negate} {
+
+	printf("%s",yytext);
+}
+
 {nada}+ {//printf("encontro nada\n");
-    }
+	}
+
+. {printf("%s",yytext);yyerror("Unexpected token"); return YYerror;}
 
 
 %%
+
+
 

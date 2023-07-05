@@ -1,6 +1,6 @@
 function mergeSort(array,A,B,l,r);
 function copyArray(array,copy,l,r);
-function merge(array,A,B,l,r); //merge in place
+function merge(array,A,B,l,r);
 
 function printArray(array,n);
 
